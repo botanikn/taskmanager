@@ -31,3 +31,13 @@ http://localhost:3000/
 В нем содержится корневой файл index.html
 Все доп файлы должны размещаться только в этом каталоге.
 Файлы скриптов в подкаталоге - scripts, стилей в подкаталоге - styles.
+
+# Backend API
+
+## Скачать и установить Postman
+https://dl.pstmn.io/download/latest/win64
+
+### Открыть Postman и создать Workspace
+
+### Открыть вкладку Collections, нажать Import, в открывшемся окне нажать Upload Files и выбрать файл из папки проекта Task Manager.postman_collection.json, затем нажать Import
+Будет загружена коллекция Task Manager c описанием и примерами API

@@ -2,12 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="de97d7d3-6fa6-42bd-a546-0a34283645e0" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Task Manager.postman_collection.json" beforeDir="false" afterPath="$PROJECT_DIR$/Task Manager.postman_collection.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controllers/tasks.js" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/tasks.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,7 +71,7 @@
       <updated>1661793222077</updated>
       <workItem from="1661793225185" duration="3437000" />
       <workItem from="1661967814626" duration="21778000" />
-      <workItem from="1662061120147" duration="6673000" />
+      <workItem from="1662061120147" duration="7855000" />
     </task>
     <servers />
   </component>
