@@ -1,2 +1,4 @@
-/node_modules
-/public
+node_modules
+.idea
+.idea/workspace.xml
+.idea/vcs.xml

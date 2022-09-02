@@ -4,7 +4,16 @@ const asyncWrapper = require('../middleware/asyncWrapper');
 const { createCustomError } = require('../errors/custom-error');
 
 const getAllTasks = asyncWrapper(async (req, res) => {
-  const tasks = await Task.find({});
+  const filter = {};
+  let { stage } = req.query;
+
+  if (typeof stage === 'string') {
+    filter['$and'] = [{
+      stage: stage
+    }];
+  }
+
+  const tasks = await Task.find(filter);
   res.status(200).json({ tasks });
 });
 
