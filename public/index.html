@@ -2,9 +2,134 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Title</title>
+  <link rel="stylesheet" href="style/style.css">
+  <title>Taskmanager</title>
+  <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="scripts/button.js"></script>
+  
 </head>
 <body>
- Заготовка
+  <main id="tasklist">
+    <div id="task_head">
+      <h1>TASKLIST</h1>
+    </div>
+    <div id="main_part">
+      <div id="ready">
+        <div id="ready_title">
+          <div id="ready_first">
+            <h2>Ready</h2>
+          </div>
+          <div id="ready_second">
+            <div id="first_row_ready">
+              <input type="button" id="sort_ready" value="Название" class="sort_style">
+            </div>
+            <div id="second_row_ready">
+              <input type="button" id="sort_cr_date_ready" value="Дата начала" class="sort_style">
+            </div>
+            <div id="third_row_ready">
+              <input type="button" id="sort_en_date_ready" value="Дата завершения" class="sort_style">
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div id="progress">
+        <div id="progress_title">
+          <div id="progress_first">
+            <h2>In Progress</h2>
+          </div>
+          <div id="progress_second">
+            <div id="first_row_progress">
+              <input type="button" id="sort_progress" value="Название" class="sort_style">
+            </div>
+            <div id="second_row_progress">
+              <input type="button" id="sort_cr_date_progress" value="Дата начала" class="sort_style">
+            </div>
+            <div id="third_row_progress">
+              <input type="button" id="sort_en_date_progress" value="Дата завершения" class="sort_style">
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div id="review">
+        <div id="review_title">
+            <div id="review_first">
+              <h2>Needs review</h2>
+            </div>
+            <div id="review_second">
+              <div id="first_row_review">
+                <input type="button" id="sort_review" value="Название" class="sort_style">
+              </div>
+              <div id="second_row_review">
+                <input type="button" id="sort_cr_date_review" value="Дата начала" class="sort_style">
+              </div>
+              <div id="third_row_review">
+                <input type="button" id="sort_en_date_review" value="Дата завершения" class="sort_style">
+              </div>
+            </div>
+        </div>
+
+      </div>
+      <div id="done">
+        <div id="done_title">
+          <div id="done_first">
+            <h2>Done</h2>
+          </div>
+          <div id="done_second">
+            <div id="first_row_done">
+              <input type="button" id="sort_done" value="Название" class="sort_style">
+            </div>
+            <div id="second_row_done">
+              <input type="button" id="sort_cr_date_done" value="Дата начала" class="sort_style">
+            </div>
+            <div id="third_row_done">
+              <input type="button" id="sort_en_date_done" value="Дата завершения" class="sort_style">
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+    
+  
+  <aside id="tc_tp">
+    <div id="tc">
+      <center>
+      <div id="text_head">
+          <h2><p>Task Cretation</p></h2>
+      </div>
+      <div id="inp">
+          <div id="div_title"><input type="text" name="title" id="title" class="inp" placeholder="Введите название задачи"></div>
+          <div id="div_value"><input type="text" name="text" id="value" class="inp" placeholder="Введите текст задачи"></div>
+          <div id="div_date"><input type="date" name="date" id="date" class="inp" placeholder="Введите планируемую дату завершения"></div>
+      </div>
+      <div id="button">
+                      
+        <input type="button" id="add" name="button" value="ДОБАВИТЬ TASK">
+      
+      </div>
+      </center>
+    </div>
+    <div id="tp">
+      <center><h2>Task Progress</h2></center>
+      <div id="column">
+        <div id="inf">
+          <p>Заданий выполнено</p>
+        </div>
+        <div id="coli">
+        </div>
+      </div>
+      <div id="pr">
+
+      </div>
+
+    </div>
+  </aside>
+
+  
 </body>
 </html>
