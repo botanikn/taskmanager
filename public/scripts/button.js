@@ -39,8 +39,46 @@ let div_stage_ch;
 let style_ch;
 let conc_mas = [];
 let sonc_mas = [];
+let stages_collection_id = []; // Массив, хранящий id всех стадий
 
 $(document).ready(function() {
+
+    axios.get('/api/v1/stages'
+    
+        ).then((stages_response) => {
+
+            for (let t = 0; t < 4; t++) {
+
+                if (stages_response.data.stages[t].name == "ready") {
+
+                    stages_collection_id[0] = stages_response.data.stages[t]._id;
+
+                }
+                else if (stages_response.data.stages[t].name == "progress") {
+
+                    stages_collection_id[1] = stages_response.data.stages[t]._id;
+
+                }
+                else if (stages_response.data.stages[t].name == "review") {
+
+                    stages_collection_id[2] = stages_response.data.stages[t]._id;
+
+                }
+                if (stages_response.data.stages[t].name == "done") {
+
+                    stages_collection_id[3] = stages_response.data.stages[t]._id;
+
+                }
+
+            }
+
+        }).catch(function() {
+
+            console.log('nothing');
+
+        })
+
+    console.log(stages_collection_id);
 
     axios.get('/api/v1/tasks'
         
@@ -77,28 +115,28 @@ $(document).ready(function() {
 
                 sonc_mas.push(sonc);
 
-                if (text_stage[i] == "63132585fdc7b119e4989363") {
+                if (text_stage[i] == stages_collection_id[0]) {
 
                     div_stage = "div#ready";
                     style = "ready_color";
                     cl = "taskready";
 
                 }
-                else if (text_stage[i] == "63132585fdc7b119e4989364") {
+                else if (text_stage[i] == stages_collection_id[1]) {
 
                     div_stage = "div#progress";
                     style = "progress_color";
                     cl = "taskprogress";
 
                 }
-                else if (text_stage[i] == "63132585fdc7b119e4989365") {
+                else if (text_stage[i] == stages_collection_id[2]) {
 
                     div_stage = "div#review";
                     style = "review_color";
                     cl = "taskreview";
 
                 }
-                else if (text_stage[i] == "63132585fdc7b119e4989366") {
+                else if (text_stage[i] == stages_collection_id[3]) {
 
                     div_stage = "div#done";
                     style = "done_color";
@@ -191,11 +229,9 @@ $(document).ready(function() {
                     
                     `).appendTo("html");
 
-                    a_s = text_stage[i];
-
                     $('.ready_input').click(function() {
 
-                        a_s = "63132585fdc7b119e4989363";
+                        a_s = stages_collection_id[0];
                         cl_ch = "taskready";
                         div_stage_ch = "div#ready";
                         style_ch = "ready_color";
@@ -204,7 +240,7 @@ $(document).ready(function() {
 
                     $('.progress_input').click(function() {
 
-                        a_s = "63132585fdc7b119e4989364";
+                        a_s = stages_collection_id[1];
                         cl_ch = "taskprogress";
                         div_stage_ch = "div#progress";
                         style_ch = "progress_color";
@@ -213,7 +249,7 @@ $(document).ready(function() {
 
                     $('.review_input').click(function() {
 
-                        a_s = "63132585fdc7b119e4989365";
+                        a_s = stages_collection_id[2];
                         cl_ch = "taskreview";
                         div_stage_ch = "div#review";
                         style_ch = "review_color";
@@ -222,7 +258,7 @@ $(document).ready(function() {
 
                     $('.done_input').click(function() {
 
-                        a_s = "63132585fdc7b119e4989366";
+                        a_s = stages_collection_id[3];
                         cl_ch = "taskdone";
                         div_stage_ch = "div#done";
                         style_ch = "done_color";
@@ -325,37 +361,6 @@ $(document).ready(function() {
                             console.log(text_id[i]);
                             $(`#id${i}`).remove();
 
-                            let change_div = $(`
-            
-                                    <div class="${cl_ch}" id="id${i}">
-                                        <div class="header">
-                                            <div class="header_title">
-                                                <center><p class="${style_ch}">${title}</p></center>
-                                            </div>
-                                            <div class="menu">
-                                                <input class="drop_button" value="..." type="button">
-                                                <div class="drop_content">
-                                                    <button value="red" id="sel_r${i}" class="redak">Редактировать</button>
-                                                    <button value="udal" id="sel_u${i}" class="udalen">Удалить</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="middle">
-                                            <p>${value}</p>
-                                        </div>
-                                        <div class="progressbar">
-                                            <progress max="100" value="${progress}"></progress>
-                                        </div>
-                                        <div class="start_date">
-                                            <p>Дата начала - ${conc_mas[i]}</p>
-                                        </div>
-                                        <div class="final_date">
-                                            <p>Дата завершения - ${sonc_mas[i]}</p>
-                                        </div>
-                                    </div>
-                                
-                                `).appendTo(div_stage_ch);
-
                             axios.patch(`/api/v1/tasks/${text_id[i]}`, {
 
                                 completeProgress: progress,
@@ -370,8 +375,7 @@ $(document).ready(function() {
                                 $('.red_window').remove();
                                 $('.pre_red_window').remove();
                                 
-                                
-                                // location.reload();
+                                location.reload();
                     
                             }).catch(function() {
                     
@@ -509,7 +513,7 @@ $(document).ready(function() {
                 title: t,
                 value: v,
                 expiredDate: d_cor,
-                stage: "63132585fdc7b119e4989363"
+                stage: stages_collection_id
                 
 
             }).then(function() {
@@ -547,7 +551,7 @@ $(document).ready(function() {
 
         for (let a = 0; a < number; a++) {
 
-            if (text_stage[a] == "63132585fdc7b119e4989363") {
+            if (text_stage[a] == stages_collection_id[0]) {
 
                 nas[a] = text_title[a].toLowerCase() + a;
                 bon++;
@@ -694,11 +698,9 @@ $(document).ready(function() {
                 
                 `).appendTo("html");
 
-                a_s = text_stage[title_id[c]];
-
                 $('.ready_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989363";
+                    a_s = stages_collection_id[0];
                     cl_ch = "taskready";
                     div_stage_ch = "div#ready";
                     style_ch = "ready_color";
@@ -707,7 +709,7 @@ $(document).ready(function() {
 
                 $('.progress_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989364";
+                    a_s = stages_collection_id[1];
                     cl_ch = "taskprogress";
                     div_stage_ch = "div#progress";
                     style_ch = "progress_color";
@@ -716,7 +718,7 @@ $(document).ready(function() {
 
                 $('.review_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989365";
+                    a_s = stages_collection_id[2];
                     cl_ch = "taskreview";
                     div_stage_ch = "div#review";
                     style_ch = "review_color";
@@ -725,7 +727,7 @@ $(document).ready(function() {
 
                 $('.done_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989366";
+                    a_s = stages_collection_id[3];
                     cl_ch = "taskdone";
                     div_stage_ch = "div#done";
                     style_ch = "done_color";
@@ -828,38 +830,6 @@ $(document).ready(function() {
                         console.log(text_id[title_id[c]]);
                         $(`#id${[title_id[c]]}`).remove();
                         
-
-                        let change_div = $(`
-            
-                            <div class="${cl_ch}" id="id${[title_id[c]]}">
-                                <div class="header">
-                                    <div class="header_title">
-                                        <center><p class="${style_ch}">${title}</p></center>
-                                    </div>
-                                    <div class="menu">
-                                        <input class="drop_button" value="..." type="button">
-                                        <div class="drop_content">
-                                            <button value="red" id="sel_r${[title_id[c]]}" class="redak">Редактировать</button>
-                                            <button value="udal" id="sel_u${[title_id[c]]}" class="udalen">Удалить</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="middle">
-                                    <p>${value}</p>
-                                </div>
-                                <div class="progressbar">
-                                    <progress max="100" value="${progress}"></progress>
-                                </div>
-                                <div class="start_date">
-                                    <p>Дата начала - ${conc_mas_dop[c]}</p>
-                                </div>
-                                <div class="final_date">
-                                    <p>Дата завершения - ${sonc_mas_dop[c]}</p>
-                                </div>
-                            </div>
-                        
-                        `).appendTo(div_stage_ch);
-
                         axios.patch(`/api/v1/tasks/${text_id[title_id[c]]}`, {
 
                             completeProgress: progress,
@@ -873,6 +843,7 @@ $(document).ready(function() {
                             console.log("Query is successful");
                             $('.red_window').remove();
                             $('.pre_red_window').remove();
+                            location.reload();
                 
                         }).catch(function() {
                 
@@ -930,7 +901,7 @@ $(document).ready(function() {
 
         for (let a = 0; a < number; a++) {
 
-            if (text_stage[a] == "63132585fdc7b119e4989363") {
+            if (text_stage[a] == stages_collection_id[0]) {
 
                 nas[a] = text_cr_date[a].toLowerCase() + a;
                 bon++;
@@ -999,7 +970,7 @@ $(document).ready(function() {
                     <div class="taskready" id="id${[title_id[c]]}">
                         <div class="header">
                             <div class="header_title">
-                                <center><p class="${style}">${text_title[title_id[c]]}</p></center>
+                                <center><p class="ready_color">${text_title[title_id[c]]}</p></center>
                             </div>
                             <div class="menu">
                                 <input class="drop_button" value="..." type="button">
@@ -1075,11 +1046,9 @@ $(document).ready(function() {
                 
                 `).appendTo("html");
 
-                a_s = text_stage[title_id[c]];
-
                 $('.ready_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989363";
+                    a_s = stages_collection_id[0];
                     cl_ch = "taskready";
                     div_stage_ch = "div#ready";
                     style_ch = "ready_color";
@@ -1088,7 +1057,7 @@ $(document).ready(function() {
 
                 $('.progress_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989364";
+                    a_s = stages_collection_id[1];
                     cl_ch = "taskprogress";
                     div_stage_ch = "div#progress";
                     style_ch = "progress_color";
@@ -1097,7 +1066,7 @@ $(document).ready(function() {
 
                 $('.review_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989365";
+                    a_s = stages_collection_id[2];
                     cl_ch = "taskreview";
                     div_stage_ch = "div#review";
                     style_ch = "review_color";
@@ -1106,7 +1075,7 @@ $(document).ready(function() {
 
                 $('.done_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989366";
+                    a_s = stages_collection_id[3];
                     cl_ch = "taskdone";
                     div_stage_ch = "div#done";
                     style_ch = "done_color";
@@ -1209,37 +1178,6 @@ $(document).ready(function() {
                         console.log(text_id[title_id[c]]);
                         $(`#id${[title_id[c]]}`).remove();
 
-                        let change_div = $(`
-            
-                            <div class="${cl_ch}" id="id${[title_id[c]]}">
-                                <div class="header">
-                                    <div class="header_title">
-                                        <center><p class="${style_ch}">${title}</p></center>
-                                    </div>
-                                    <div class="menu">
-                                        <input class="drop_button" value="..." type="button">
-                                        <div class="drop_content">
-                                            <button value="red" id="sel_r${[title_id[c]]}" class="redak">Редактировать</button>
-                                            <button value="udal" id="sel_u${[title_id[c]]}" class="udalen">Удалить</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="middle">
-                                    <p>${value}</p>
-                                </div>
-                                <div class="progressbar">
-                                    <progress max="100" value="${progress}"></progress>
-                                </div>
-                                <div class="start_date">
-                                    <p>Дата начала - ${conc_mas_dop[c]}</p>
-                                </div>
-                                <div class="final_date">
-                                    <p>Дата завершения - ${sonc_mas_dop[c]}</p>
-                                </div>
-                            </div>
-                        
-                        `).appendTo(div_stage_ch);
-
                         axios.patch(`/api/v1/tasks/${text_id[title_id[c]]}`, {
 
                             completeProgress: progress,
@@ -1253,6 +1191,7 @@ $(document).ready(function() {
                             console.log("Query is successful");
                             $('.red_window').remove();
                             $('.pre_red_window').remove();
+                            location.reload();
                 
                         }).catch(function() {
                 
@@ -1310,7 +1249,7 @@ $(document).ready(function() {
 
         for (let a = 0; a < number; a++) {
 
-            if (text_stage[a] == "63132585fdc7b119e4989363") {
+            if (text_stage[a] == stages_collection_id[0]) {
 
                 nas[a] = text_ex_date[a].toLowerCase() + a;
                 bon++;
@@ -1379,7 +1318,7 @@ $(document).ready(function() {
                     <div class="taskready" id="id${[title_id[c]]}">
                         <div class="header">
                             <div class="header_title">
-                                <center><p class="${style}">${text_title[title_id[c]]}</p></center>
+                                <center><p class="ready_color">${text_title[title_id[c]]}</p></center>
                             </div>
                             <div class="menu">
                                 <input class="drop_button" value="..." type="button">
@@ -1455,11 +1394,9 @@ $(document).ready(function() {
                 
                 `).appendTo("html");
 
-                a_s = text_stage[title_id[c]];
-
                 $('.ready_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989363";
+                    a_s = stages_collection_id[0];
                     cl_ch = "taskready";
                     div_stage_ch = "div#ready";
                     style_ch = "ready_color";
@@ -1468,7 +1405,7 @@ $(document).ready(function() {
 
                 $('.progress_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989364";
+                    a_s = stages_collection_id[1];
                     cl_ch = "taskprogress";
                     div_stage_ch = "div#progress";
                     style_ch = "progress_color";
@@ -1477,7 +1414,7 @@ $(document).ready(function() {
 
                 $('.review_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989365";
+                    a_s = stages_collection_id[2];
                     cl_ch = "taskreview";
                     div_stage_ch = "div#review";
                     style_ch = "review_color";
@@ -1486,7 +1423,7 @@ $(document).ready(function() {
 
                 $('.done_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989366";
+                    a_s = stages_collection_id[3]
                     cl_ch = "taskdone";
                     div_stage_ch = "div#done";
                     style_ch = "done_color";
@@ -1589,37 +1526,6 @@ $(document).ready(function() {
                         console.log(text_id[title_id[c]]);
                         $(`#id${[title_id[c]]}`).remove();
 
-                        let change_div = $(`
-            
-                            <div class="${cl_ch}" id="id${[title_id[c]]}">
-                                <div class="header">
-                                    <div class="header_title">
-                                        <center><p class="${style_ch}">${title}</p></center>
-                                    </div>
-                                    <div class="menu">
-                                        <input class="drop_button" value="..." type="button">
-                                        <div class="drop_content">
-                                            <button value="red" id="sel_r${[title_id[c]]}" class="redak">Редактировать</button>
-                                            <button value="udal" id="sel_u${[title_id[c]]}" class="udalen">Удалить</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="middle">
-                                    <p>${value}</p>
-                                </div>
-                                <div class="progressbar">
-                                    <progress max="100" value="${progress}"></progress>
-                                </div>
-                                <div class="start_date">
-                                    <p>Дата начала - ${conc_mas_dop[c]}</p>
-                                </div>
-                                <div class="final_date">
-                                    <p>Дата завершения - ${sonc_mas_dop[c]}</p>
-                                </div>
-                            </div>
-                        
-                        `).appendTo(div_stage_ch);
-
                         axios.patch(`/api/v1/tasks/${text_id[title_id[c]]}`, {
 
                             completeProgress: progress,
@@ -1633,6 +1539,7 @@ $(document).ready(function() {
                             console.log("Query is successful");
                             $('.red_window').remove();
                             $('.pre_red_window').remove();
+                            location.reload();
                 
                         }).catch(function() {
                 
@@ -1690,7 +1597,7 @@ $(document).ready(function() {
 
         for (let a = 0; a < number; a++) {
 
-            if (text_stage[a] == "63132585fdc7b119e4989364") {
+            if (text_stage[a] == stages_collection_id[1]) {
 
                 nas[a] = text_title[a].toLowerCase() + a;
                 bon++;
@@ -1833,11 +1740,9 @@ $(document).ready(function() {
                     
                     `).appendTo("html");
         
-                    a_s = text_stage[title_id[c]];
-        
                     $('.ready_input').click(function() {
         
-                        a_s = "63132585fdc7b119e4989363";
+                        a_s = stages_collection_id[0];
                         cl_ch = "taskready";
                         div_stage_ch = "div#ready";
                         style_ch = "ready_color";
@@ -1846,7 +1751,7 @@ $(document).ready(function() {
         
                     $('.progress_input').click(function() {
         
-                        a_s = "63132585fdc7b119e4989364";
+                        a_s = stages_collection_id[1];
                         cl_ch = "taskprogress";
                         div_stage_ch = "div#progress";
                         style_ch = "progress_color";
@@ -1855,7 +1760,7 @@ $(document).ready(function() {
         
                     $('.review_input').click(function() {
         
-                        a_s = "63132585fdc7b119e4989365";
+                        a_s = stages_collection_id[2];
                         cl_ch = "taskreview";
                         div_stage_ch = "div#review";
                         style_ch = "review_color";
@@ -1864,7 +1769,7 @@ $(document).ready(function() {
         
                     $('.done_input').click(function() {
         
-                        a_s = "63132585fdc7b119e4989366";
+                        a_s = stages_collection_id[3];
                         cl_ch = "taskdone";
                         div_stage_ch = "div#done";
                         style_ch = "done_color";
@@ -1967,37 +1872,6 @@ $(document).ready(function() {
                             console.log(text_id[title_id[c]]);
                             $(`#id${[title_id[c]]}`).remove();
 
-                            let change_div = $(`
-            
-                            <div class="${cl_ch}" id="id${[title_id[c]]}">
-                                <div class="header">
-                                    <div class="header_title">
-                                        <center><p class="${style_ch}">${title}</p></center>
-                                    </div>
-                                    <div class="menu">
-                                        <input class="drop_button" value="..." type="button">
-                                        <div class="drop_content">
-                                            <button value="red" id="sel_r${[title_id[c]]}" class="redak">Редактировать</button>
-                                            <button value="udal" id="sel_u${[title_id[c]]}" class="udalen">Удалить</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="middle">
-                                    <p>${value}</p>
-                                </div>
-                                <div class="progressbar">
-                                    <progress max="100" value="${progress}"></progress>
-                                </div>
-                                <div class="start_date">
-                                    <p>Дата начала - ${conc_mas_dop[c]}</p>
-                                </div>
-                                <div class="final_date">    
-                                    <p>Дата завершения - ${sonc_mas_dop[c]}</p>
-                                </div>
-                            </div>
-                        
-                        `).appendTo(div_stage_ch);
-        
                             axios.patch(`/api/v1/tasks/${text_id[title_id[c]]}`, {
         
                                 completeProgress: progress,
@@ -2011,6 +1885,7 @@ $(document).ready(function() {
                                 console.log("Query is successful");
                                 $('.red_window').remove();
                                 $('.pre_red_window').remove();
+                                location.reload();
                     
                             }).catch(function() {
                     
@@ -2070,7 +1945,7 @@ $(document).ready(function() {
 
         for (let a = 0; a < number; a++) {
 
-            if (text_stage[a] == "63132585fdc7b119e4989364") {
+            if (text_stage[a] == stages_collection_id[1]) {
 
                 nas[a] = text_cr_date[a].toLowerCase() + a;
                 bon++;
@@ -2215,11 +2090,9 @@ $(document).ready(function() {
                 
                 `).appendTo("html");
 
-                a_s = text_stage[title_id[c]];
-
                 $('.ready_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989363";
+                    a_s = stages_collection_id[0];
                     cl_ch = "taskready";
                     div_stage_ch = "div#ready";
                     style_ch = "ready_color";
@@ -2228,7 +2101,7 @@ $(document).ready(function() {
 
                 $('.progress_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989364";
+                    a_s = stages_collection_id[1];
                     cl_ch = "taskprogress";
                     div_stage_ch = "div#progress";
                     style_ch = "progress_color";
@@ -2237,7 +2110,7 @@ $(document).ready(function() {
 
                 $('.review_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989365";
+                    a_s = stages_collection_id[2];
                     cl_ch = "taskreview";
                     div_stage_ch = "div#review";
                     style_ch = "review_color";
@@ -2246,7 +2119,7 @@ $(document).ready(function() {
 
                 $('.done_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989366";
+                    a_s = stages_collection_id[3];
                     cl_ch = "taskdone";
                     div_stage_ch = "div#done";
                     style_ch = "done_color";
@@ -2349,36 +2222,7 @@ $(document).ready(function() {
                         console.log(text_id[title_id[c]]);
                         $(`#id${[title_id[c]]}`).remove();
 
-                        let change_div = $(`
-            
-                            <div class="${cl_ch}" id="id${[title_id[c]]}">
-                                <div class="header">
-                                    <div class="header_title">
-                                        <center><p class="${style_ch}">${title}</p></center>
-                                    </div>
-                                    <div class="menu">
-                                        <input class="drop_button" value="..." type="button">
-                                        <div class="drop_content">
-                                            <button value="red" id="sel_r${[title_id[c]]}" class="redak">Редактировать</button>
-                                            <button value="udal" id="sel_u${[title_id[c]]}" class="udalen">Удалить</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="middle">
-                                    <p>${value}</p>
-                                </div>
-                                <div class="progressbar">
-                                    <progress max="100" value="${progress}"></progress>
-                                </div>
-                                <div class="start_date">
-                                    <p>Дата начала - ${conc_mas_dop[c]}</p>
-                                </div>
-                                <div class="final_date">
-                                    <p>Дата завершения - ${sonc_mas_dop[c]}</p>
-                                </div>
-                            </div>
                         
-                        `).appendTo(div_stage_ch);
 
                         axios.patch(`/api/v1/tasks/${text_id[title_id[c]]}`, {
 
@@ -2393,6 +2237,7 @@ $(document).ready(function() {
                             console.log("Query is successful");
                             $('.red_window').remove();
                             $('.pre_red_window').remove();
+                            location.reload();
                 
                         }).catch(function() {
                 
@@ -2450,7 +2295,7 @@ $(document).ready(function() {
 
         for (let a = 0; a < number; a++) {
 
-            if (text_stage[a] == "63132585fdc7b119e4989364") {
+            if (text_stage[a] == stages_collection_id[1]) {
 
                 nas[a] = text_ex_date[a].toLowerCase() + a;
                 bon++;
@@ -2595,11 +2440,9 @@ $(document).ready(function() {
                 
                 `).appendTo("html");
 
-                a_s = text_stage[title_id[c]];
-
                 $('.ready_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989363";
+                    a_s = stages_collection_id[0];
                     cl_ch = "taskready";
                     div_stage_ch = "div#ready";
                     style_ch = "ready_color";
@@ -2608,7 +2451,7 @@ $(document).ready(function() {
 
                 $('.progress_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989364";
+                    a_s = stages_collection_id[1];
                     cl_ch = "taskprogress";
                     div_stage_ch = "div#progress";
                     style_ch = "progress_color";
@@ -2617,7 +2460,7 @@ $(document).ready(function() {
 
                 $('.review_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989365";
+                    a_s = stages_collection_id[2];
                     cl_ch = "taskreview";
                     div_stage_ch = "div#review";
                     style_ch = "review_color";
@@ -2626,7 +2469,7 @@ $(document).ready(function() {
 
                 $('.done_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989366";
+                    a_s = stages_collection_id[3];
                     cl_ch = "taskdone";
                     div_stage_ch = "div#done";
                     style_ch = "done_color";
@@ -2729,36 +2572,7 @@ $(document).ready(function() {
                         console.log(text_id[title_id[c]]);
                         $(`#id${[title_id[c]]}`).remove();
 
-                        let change_div = $(`
-            
-                            <div class="${cl_ch}" id="id${[title_id[c]]}">
-                                <div class="header">
-                                    <div class="header_title">
-                                        <center><p class="${style_ch}">${title}</p></center>
-                                    </div>
-                                    <div class="menu">
-                                        <input class="drop_button" value="..." type="button">
-                                        <div class="drop_content">
-                                            <button value="red" id="sel_r${[title_id[c]]}" class="redak">Редактировать</button>
-                                            <button value="udal" id="sel_u${[title_id[c]]}" class="udalen">Удалить</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="middle">
-                                    <p>${value}</p>
-                                </div>
-                                <div class="progressbar">
-                                    <progress max="100" value="${progress}"></progress>
-                                </div>
-                                <div class="start_date">
-                                    <p>Дата начала - ${conc_mas_dop[c]}</p>
-                                </div>
-                                <div class="final_date">
-                                    <p>Дата завершения - ${sonc_mas_dop[c]}</p>
-                                </div>
-                            </div>
                         
-                        `).appendTo(div_stage_ch);
 
                         axios.patch(`/api/v1/tasks/${text_id[title_id[c]]}`, {
 
@@ -2773,6 +2587,7 @@ $(document).ready(function() {
                             console.log("Query is successful");
                             $('.red_window').remove();
                             $('.pre_red_window').remove();
+                            location.reload();
                 
                         }).catch(function() {
                 
@@ -2830,7 +2645,7 @@ $(document).ready(function() {
 
         for (let a = 0; a < number; a++) {
 
-            if (text_stage[a] == "63132585fdc7b119e4989365") {
+            if (text_stage[a] == stages_collection_id[2]) {
 
                 nas[a] = text_title[a].toLowerCase() + a;
                 bon++;
@@ -2858,7 +2673,7 @@ $(document).ready(function() {
         console.log(title_s);
         // let title_id = [];
 
-        for (let b = odin; b < number; b++) {
+        for (let b = odin + 1; b < number; b++) {
 
             title_id.push(title_s[b][title_s[b].length - 1]);
 
@@ -2973,11 +2788,9 @@ $(document).ready(function() {
                     
                     `).appendTo("html");
         
-                    a_s = text_stage[title_id[c]];
-        
                     $('.ready_input').click(function() {
         
-                        a_s = "63132585fdc7b119e4989363";
+                        a_s = stages_collection_id[0];
                         cl_ch = "taskready";
                         div_stage_ch = "div#ready";
                         style_ch = "ready_color";
@@ -2986,7 +2799,7 @@ $(document).ready(function() {
         
                     $('.progress_input').click(function() {
         
-                        a_s = "63132585fdc7b119e4989364";
+                        a_s = stages_collection_id[1]
                         cl_ch = "taskprogress";
                         div_stage_ch = "div#progress";
                         style_ch = "progress_color";
@@ -2995,7 +2808,7 @@ $(document).ready(function() {
         
                     $('.review_input').click(function() {
         
-                        a_s = "63132585fdc7b119e4989365";
+                        a_s = stages_collection_id[2];
                         cl_ch = "taskreview";
                         div_stage_ch = "div#review";
                         style_ch = "review_color";
@@ -3004,7 +2817,7 @@ $(document).ready(function() {
         
                     $('.done_input').click(function() {
         
-                        a_s = "63132585fdc7b119e4989366";
+                        a_s = stages_collection_id[3];
                         cl_ch = "taskdone";
                         div_stage_ch = "div#done";
                         style_ch = "done_color";
@@ -3106,37 +2919,6 @@ $(document).ready(function() {
         
                             console.log(text_id[title_id[c]]);
                             $(`#id${[title_id[c]]}`).remove();
-
-                            let change_div = $(`
-            
-                                <div class="${cl_ch}" id="id${[title_id[c]]}">
-                                    <div class="header">
-                                        <div class="header_title">
-                                            <center><p class="${style_ch}">${title}</p></center>
-                                        </div>
-                                        <div class="menu">
-                                            <input class="drop_button" value="..." type="button">
-                                            <div class="drop_content">
-                                                <button value="red" id="sel_r${[title_id[c]]}" class="redak">Редактировать</button>
-                                                <button value="udal" id="sel_u${[title_id[c]]}" class="udalen">Удалить</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="middle">
-                                        <p>${value}</p>
-                                    </div>
-                                    <div class="progressbar">
-                                        <progress max="100" value="${progress}"></progress>
-                                    </div>
-                                    <div class="start_date">
-                                        <p>Дата начала - ${conc_mas_dop[c]}</p>
-                                    </div>
-                                    <div class="final_date">
-                                        <p>Дата завершения - ${sonc_mas_dop[c]}</p>
-                                    </div>
-                                </div>
-                        
-                            `).appendTo(div_stage_ch);
         
                             axios.patch(`/api/v1/tasks/${text_id[title_id[c]]}`, {
         
@@ -3151,6 +2933,7 @@ $(document).ready(function() {
                                 console.log("Query is successful");
                                 $('.red_window').remove();
                                 $('.pre_red_window').remove();
+                                location.reload();
                                         
                             }).catch(function() {
                     
@@ -3208,7 +2991,7 @@ $(document).ready(function() {
 
         for (let a = 0; a < number; a++) {
 
-            if (text_stage[a] == "63132585fdc7b119e4989365") {
+            if (text_stage[a] == stages_collection_id[2]) {
 
                 nas[a] = text_cr_date[a].toLowerCase() + a;
                 bon++;
@@ -3236,7 +3019,7 @@ $(document).ready(function() {
         console.log(`Сортированные даты = ${title_s}`);
         // let title_id = [];
 
-        for (let b = odin; b < number; b++) {
+        for (let b = odin + 1; b < number; b++) {
 
             title_id.push(title_s[b][title_s[b].length - 1]);
 
@@ -3353,11 +3136,9 @@ $(document).ready(function() {
                 
                 `).appendTo("html");
 
-                a_s = text_stage[title_id[c]];
-
                 $('.ready_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989363";
+                    a_s = stages_collection_id[0];
                     cl_ch = "taskready";
                     div_stage_ch = "div#ready";
                     style_ch = "ready_color";
@@ -3366,7 +3147,7 @@ $(document).ready(function() {
 
                 $('.progress_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989364";
+                    a_s = stages_collection_id[1];
                     cl_ch = "taskprogress";
                     div_stage_ch = "div#progress";
                     style_ch = "progress_color";
@@ -3375,7 +3156,7 @@ $(document).ready(function() {
 
                 $('.review_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989365";
+                    a_s = stages_collection_id[2];
                     cl_ch = "taskreview";
                     div_stage_ch = "div#review";
                     style_ch = "review_color";
@@ -3384,7 +3165,7 @@ $(document).ready(function() {
 
                 $('.done_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989366";
+                    a_s = stages_collection_id[3];
                     cl_ch = "taskdone";
                     div_stage_ch = "div#done";
                     style_ch = "done_color";
@@ -3487,36 +3268,7 @@ $(document).ready(function() {
                         console.log(text_id[title_id[c]]);
                         $(`#id${[title_id[c]]}`).remove();
 
-                        let change_div = $(`
-            
-                            <div class="${cl_ch}" id="id${[title_id[c]]}">
-                                <div class="header">
-                                    <div class="header_title">
-                                        <center><p class="${style_ch}">${title}</p></center>
-                                    </div>
-                                    <div class="menu">
-                                        <input class="drop_button" value="..." type="button">
-                                        <div class="drop_content">
-                                            <button value="red" id="sel_r${[title_id[c]]}" class="redak">Редактировать</button>
-                                            <button value="udal" id="sel_u${[title_id[c]]}" class="udalen">Удалить</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="middle">
-                                    <p>${value}</p>
-                                </div>
-                                <div class="progressbar">
-                                    <progress max="100" value="${progress}"></progress>
-                                </div>
-                                <div class="start_date">
-                                    <p>Дата начала - ${conc_mas_dop[c]}</p>
-                                </div>
-                                <div class="final_date">
-                                    <p>Дата завершения - ${sonc_mas_dop[c]}</p>
-                                </div>
-                            </div>
                         
-                        `).appendTo(div_stage_ch);
 
                         axios.patch(`/api/v1/tasks/${text_id[title_id[c]]}`, {
 
@@ -3531,6 +3283,7 @@ $(document).ready(function() {
                             console.log("Query is successful");
                             $('.red_window').remove();
                             $('.pre_red_window').remove();
+                            location.reload();
                 
                         }).catch(function() {
                 
@@ -3588,7 +3341,7 @@ $(document).ready(function() {
 
         for (let a = 0; a < number; a++) {
 
-            if (text_stage[a] == "63132585fdc7b119e4989365") {
+            if (text_stage[a] == stages_collection_id[2]) {
 
                 nas[a] = text_ex_date[a].toLowerCase() + a;
                 bon++;
@@ -3616,7 +3369,7 @@ $(document).ready(function() {
         console.log(`Сортированные даты = ${title_s}`);
         // let title_id = [];
 
-        for (let b = odin; b < number; b++) {
+        for (let b = odin + 1; b < number; b++) {
 
             title_id.push(title_s[b][title_s[b].length - 1]);
 
@@ -3733,11 +3486,9 @@ $(document).ready(function() {
                 
                 `).appendTo("html");
 
-                a_s = text_stage[title_id[c]];
-
                 $('.ready_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989363";
+                    a_s =  stages_collection_id[0];
                     cl_ch = "taskready";
                     div_stage_ch = "div#ready";
                     style_ch = "ready_color";
@@ -3746,7 +3497,7 @@ $(document).ready(function() {
 
                 $('.progress_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989364";
+                    a_s =  stages_collection_id[1];
                     cl_ch = "taskprogress";
                     div_stage_ch = "div#progress";
                     style_ch = "progress_color";
@@ -3755,7 +3506,7 @@ $(document).ready(function() {
 
                 $('.review_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989365";
+                    a_s =  stages_collection_id[2];
                     cl_ch = "taskreview";
                     div_stage_ch = "div#review";
                     style_ch = "review_color";
@@ -3764,7 +3515,7 @@ $(document).ready(function() {
 
                 $('.done_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989366";
+                    a_s =  stages_collection_id[3];
                     cl_ch = "taskdone";
                     div_stage_ch = "div#done";
                     style_ch = "done_color";
@@ -3867,36 +3618,7 @@ $(document).ready(function() {
                         console.log(text_id[title_id[c]]);
                         $(`#id${[title_id[c]]}`).remove();
 
-                        let change_div = $(`
-            
-                            <div class="${cl_ch}" id="id${[title_id[c]]}">
-                                <div class="header">
-                                    <div class="header_title">
-                                        <center><p class="${style_ch}">${title}</p></center>
-                                    </div>
-                                    <div class="menu">
-                                        <input class="drop_button" value="..." type="button">
-                                        <div class="drop_content">
-                                            <button value="red" id="sel_r${[title_id[c]]}" class="redak">Редактировать</button>
-                                            <button value="udal" id="sel_u${[title_id[c]]}" class="udalen">Удалить</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="middle">
-                                    <p>${value}</p>
-                                </div>
-                                <div class="progressbar">
-                                    <progress max="100" value="${progress}"></progress>
-                                </div>
-                                <div class="start_date">
-                                    <p>Дата начала - ${conc_mas_dop[c]}</p>
-                                </div>
-                                <div class="final_date">
-                                    <p>Дата завершения - ${sonc_mas_dop[c]}</p>
-                                </div>
-                            </div>
                         
-                        `).appendTo(div_stage_ch);
 
                         axios.patch(`/api/v1/tasks/${text_id[title_id[c]]}`, {
 
@@ -3911,6 +3633,7 @@ $(document).ready(function() {
                             console.log("Query is successful");
                             $('.red_window').remove();
                             $('.pre_red_window').remove();
+                            location.reload();
                 
                         }).catch(function() {
                 
@@ -3968,7 +3691,7 @@ $(document).ready(function() {
 
         for (let a = 0; a < number; a++) {
 
-            if (text_stage[a] == "63132585fdc7b119e4989366") {
+            if (text_stage[a] ==  stages_collection_id[3]) {
 
                 nas[a] = text_title[a].toLowerCase() + a;
                 bon++;
@@ -3996,7 +3719,7 @@ $(document).ready(function() {
         console.log(title_s);
         // let title_id = [];
 
-        for (let b = odin + 1; b < number; b++) {
+        for (let b = odin; b < number; b++) {
 
             title_id.push(title_s[b][title_s[b].length - 1]);
 
@@ -4111,11 +3834,9 @@ $(document).ready(function() {
                     
                     `).appendTo("html");
         
-                    a_s = text_stage[title_id[c]];
-        
                     $('.ready_input').click(function() {
         
-                        a_s = "63132585fdc7b119e4989363";
+                        a_s =  stages_collection_id[0];
                         cl_ch = "taskready";
                         div_stage_ch = "div#ready";
                         style_ch = "ready_color";
@@ -4124,7 +3845,7 @@ $(document).ready(function() {
         
                     $('.progress_input').click(function() {
         
-                        a_s = "63132585fdc7b119e4989364";
+                        a_s =  stages_collection_id[1];
                         cl_ch = "taskprogress";
                         div_stage_ch = "div#progress";
                         style_ch = "progress_color";
@@ -4133,7 +3854,7 @@ $(document).ready(function() {
         
                     $('.review_input').click(function() {
         
-                        a_s = "63132585fdc7b119e4989365";
+                        a_s =  stages_collection_id[2];
                         cl_ch = "taskreview";
                         div_stage_ch = "div#review";
                         style_ch = "review_color";
@@ -4142,7 +3863,7 @@ $(document).ready(function() {
         
                     $('.done_input').click(function() {
         
-                        a_s = "63132585fdc7b119e4989366";
+                        a_s =  stages_collection_id[3];
                         cl_ch = "taskdone";
                         div_stage_ch = "div#done";
                         style_ch = "done_color";
@@ -4245,36 +3966,7 @@ $(document).ready(function() {
                             console.log(text_id[title_id[c]]);
                             $(`#id${[title_id[c]]}`).remove();
 
-                            let change_div = $(`
-            
-                            <div class="${cl_ch}" id="id${[title_id[c]]}">
-                                <div class="header">
-                                    <div class="header_title">
-                                        <center><p class="${style_ch}">${title}</p></center>
-                                    </div>
-                                    <div class="menu">
-                                        <input class="drop_button" value="..." type="button">
-                                        <div class="drop_content">
-                                            <button value="red" id="sel_r${[title_id[c]]}" class="redak">Редактировать</button>
-                                            <button value="udal" id="sel_u${[title_id[c]]}" class="udalen">Удалить</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="middle">
-                                    <p>${value}</p>
-                                </div>
-                                <div class="progressbar">
-                                    <progress max="100" value="${progress}"></progress>
-                                </div>
-                                <div class="start_date">
-                                    <p>Дата начала - ${conc_mas_dop[c]}</p>
-                                </div>
-                                <div class="final_date">
-                                    <p>Дата завершения - ${sonc_mas_dop[c]}</p>
-                                </div>
-                            </div>
-                        
-                        `).appendTo(div_stage_ch);
+                            
         
                             axios.patch(`/api/v1/tasks/${text_id[title_id[c]]}`, {
         
@@ -4289,6 +3981,7 @@ $(document).ready(function() {
                                 console.log("Query is successful");
                                 $('.red_window').remove();
                                 $('.pre_red_window').remove();
+                                location.reload();
                     
                             }).catch(function() {
                     
@@ -4345,7 +4038,7 @@ $(document).ready(function() {
 
         for (let a = 0; a < number; a++) {
 
-            if (text_stage[a] == "63132585fdc7b119e4989366") {
+            if (text_stage[a] ==  stages_collection_id[3]) {
 
                 nas[a] = text_cr_date[a].toLowerCase() + a;
                 bon++;
@@ -4373,7 +4066,7 @@ $(document).ready(function() {
         console.log(`Сортированные даты = ${title_s}`);
         // let title_id = [];
 
-        for (let b = odin + 1; b < number; b++) {
+        for (let b = odin; b < number; b++) {
 
             title_id.push(title_s[b][title_s[b].length - 1]);
 
@@ -4490,11 +4183,9 @@ $(document).ready(function() {
                 
                 `).appendTo("html");
 
-                a_s = text_stage[title_id[c]];
-
                 $('.ready_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989363";
+                    a_s =  stages_collection_id[0];
                     cl_ch = "taskready";
                     div_stage_ch = "div#ready";
                     style_ch = "ready_color";
@@ -4503,7 +4194,7 @@ $(document).ready(function() {
 
                 $('.progress_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989364";
+                    a_s =  stages_collection_id[1];
                     cl_ch = "taskprogress";
                     div_stage_ch = "div#progress";
                     style_ch = "progress_color";
@@ -4512,7 +4203,7 @@ $(document).ready(function() {
 
                 $('.review_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989365";
+                    a_s =  stages_collection_id[2];
                     cl_ch = "taskreview";
                     div_stage_ch = "div#review";
                     style_ch = "review_color";
@@ -4521,7 +4212,7 @@ $(document).ready(function() {
 
                 $('.done_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989366";
+                    a_s =  stages_collection_id[3];
                     cl_ch = "taskdone";
                     div_stage_ch = "div#done";
                     style_ch = "done_color";
@@ -4624,36 +4315,7 @@ $(document).ready(function() {
                         console.log(text_id[title_id[c]]);
                         $(`#id${[title_id[c]]}`).remove();
 
-                        let change_div = $(`
-            
-                            <div class="${cl_ch}" id="id${[title_id[c]]}">
-                                <div class="header">
-                                    <div class="header_title">
-                                        <center><p class="${style_ch}">${title}</p></center>
-                                    </div>
-                                    <div class="menu">
-                                        <input class="drop_button" value="..." type="button">
-                                        <div class="drop_content">
-                                            <button value="red" id="sel_r${[title_id[c]]}" class="redak">Редактировать</button>
-                                            <button value="udal" id="sel_u${[title_id[c]]}" class="udalen">Удалить</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="middle">
-                                    <p>${value}</p>
-                                </div>
-                                <div class="progressbar">
-                                    <progress max="100" value="${progress}"></progress>
-                                </div>
-                                <div class="start_date">
-                                    <p>Дата начала - ${conc_mas_dop[c]}</p>
-                                </div>
-                                <div class="final_date">
-                                    <p>Дата завершения - ${sonc_mas_dop[c]}</p>
-                                </div>
-                            </div>
                         
-                        `).appendTo(div_stage_ch);
 
                         axios.patch(`/api/v1/tasks/${text_id[title_id[c]]}`, {
 
@@ -4668,6 +4330,7 @@ $(document).ready(function() {
                             console.log("Query is successful");
                             $('.red_window').remove();
                             $('.pre_red_window').remove();
+                            location.reload();
                 
                         }).catch(function() {
                 
@@ -4725,7 +4388,7 @@ $(document).ready(function() {
 
         for (let a = 0; a < number; a++) {
 
-            if (text_stage[a] == "63132585fdc7b119e4989364") {
+            if (text_stage[a] ==  stages_collection_id[3]) {
 
                 nas[a] = text_ex_date[a].toLowerCase() + a;
                 bon++;
@@ -4753,7 +4416,7 @@ $(document).ready(function() {
         console.log(`Сортированные даты = ${title_s}`);
         // let title_id = [];
 
-        for (let b = odin + 1; b < number; b++) {
+        for (let b = odin; b < number; b++) {
 
             title_id.push(title_s[b][title_s[b].length - 1]);
 
@@ -4870,11 +4533,9 @@ $(document).ready(function() {
                 
                 `).appendTo("html");
 
-                a_s = text_stage[title_id[c]];
-
                 $('.ready_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989363";
+                    a_s =  stages_collection_id[0];
                     cl_ch = "taskready";
                     div_stage_ch = "div#ready";
                     style_ch = "ready_color";
@@ -4883,7 +4544,7 @@ $(document).ready(function() {
 
                 $('.progress_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989364";
+                    a_s =  stages_collection_id[1];
                     cl_ch = "taskprogress";
                     div_stage_ch = "div#progress";
                     style_ch = "progress_color";
@@ -4892,7 +4553,7 @@ $(document).ready(function() {
 
                 $('.review_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989365";
+                    a_s =  stages_collection_id[2];
                     cl_ch = "taskreview";
                     div_stage_ch = "div#review";
                     style_ch = "review_color";
@@ -4901,7 +4562,7 @@ $(document).ready(function() {
 
                 $('.done_input').click(function() {
 
-                    a_s = "63132585fdc7b119e4989366";
+                    a_s =  stages_collection_id[3];
                     cl_ch = "taskdone";
                     div_stage_ch = "div#done";
                     style_ch = "done_color";
@@ -5004,36 +4665,7 @@ $(document).ready(function() {
                         console.log(text_id[title_id[c]]);
                         $(`#id${[title_id[c]]}`).remove();
 
-                        let change_div = $(`
-            
-                            <div class="${cl_ch}" id="id${[title_id[c]]}">
-                                <div class="header">
-                                    <div class="header_title">
-                                        <center><p class="${style_ch}">${title}</p></center>
-                                    </div>
-                                    <div class="menu">
-                                        <input class="drop_button" value="..." type="button">
-                                        <div class="drop_content">
-                                            <button value="red" id="sel_r${[title_id[c]]}" class="redak">Редактировать</button>
-                                            <button value="udal" id="sel_u${[title_id[c]]}" class="udalen">Удалить</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="middle">
-                                    <p>${value}</p>
-                                </div>
-                                <div class="progressbar">
-                                    <progress max="100" value="${progress}"></progress>
-                                </div>
-                                <div class="start_date">
-                                    <p>Дата начала - ${conc_mas_dop[c]}</p>
-                                </div>
-                                <div class="final_date">
-                                    <p>Дата завершения - ${sonc_mas_dop[c]}</p>
-                                </div>
-                            </div>
                         
-                        `).appendTo(div_stage_ch);
 
                         axios.patch(`/api/v1/tasks/${text_id[title_id[c]]}`, {
 
@@ -5048,6 +4680,7 @@ $(document).ready(function() {
                             console.log("Query is successful");
                             $('.red_window').remove();
                             $('.pre_red_window').remove();
+                            location.reload();
                 
                         }).catch(function() {
                 
