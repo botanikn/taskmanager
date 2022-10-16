@@ -1,47 +1,41 @@
-let text_title = [];
-let text_value = [];
-let text_progressbar = [];
-let text_cr_date = [];
-let conc = "";
-let text_ex_date = [];
-let sonc = "";
-let text_stage = [];
-let some = [];
-let title_s = [];
-let rar;
-let title_id = [];
-let text_id = [];
-let number = 0;
-let id_b = 0;
-let bd = [];
-let a_s = "";
-let div_stage;
-let style;
-let done = 0;
-let title = "";
-let title_cl = "";
-let value = "";
-let value_cl = "";
-let progress;
-let en = "";
-let en_cl = "";
-let en_cor;
-let a_s_cl;
-let t = "";
-let v = "";
-let d = "";
-let odin = 0;
-let bon = 0;
-let cl;
-let zam = [];
-let cl_ch;
-let div_stage_ch;
-let style_ch;
-let conc_mas = [];
-let sonc_mas = [];
+let text_title = []; // Массив, хранящий названия всех task'ов
+let text_value = []; // Массив, хранящий содержание всех task'ов
+let text_progressbar = []; // Массив, хранящий прогресс всех task'ов
+let text_cr_date = []; // Массив, хранящий даты создания всех task'ов
+let text_cr_dare_pars = ""; // Переменная хранящая дату создания task'a в удобном виде
+let text_ex_date = []; // Массив, хранящий даты предполагаемого окончания всех task'ов
+let text_ex_date_pars = ""; // Переменная хранящая дату редполагаемого окончания task'a в удобном виде
+let text_stage = []; // Массив, хранящий стадии всех task'ов
+let title_s = []; // Массив, хранящий отсортированный массив nas
+let title_id = []; // Массив, хранящий только определённые и отсортированные task'и
+let text_id = []; // Массив, хранящий id всех task'ов
+let number = 0; // Переменная, хранящая количество task'ов в коллекции
+let bd = []; // Переменная, хранящая все task'и
+let stage_change = ""; // Переменная, хранящая стадию task'а после его редактирования
+let div_stage; // Переменная, хранящая информацию, в какой столбец будет отнесён task
+let style; // Переменная, хранящая информацию, каким цветом будет отображаться название task'а
+let done = 0; // Переменная, хранящая количество выполненных заданий
+let title = ""; // Переменная, хранящая будущее название task'а после редактирования
+let value = ""; // Переменная, хранящая будущее содержание task'а после редактирования
+let progress; // Переменная, хранящая будущую шкалу прогресса task'а после редактирования
+let en = ""; // Переменная, хранящая будущую введённую дату планируемого окончания task'а после редактирования
+let en_cor; // Переменная, хранящая обработанную переменную en
+let t = ""; // Переменная, хранящая название task'а во время его создания
+let v = ""; // Переменная, хранящая содержание task'а во время его создания
+let d = ""; // Переменная, хранящая дату планируемого окончания task'а во время его создания
+let extra = 0; // Переменная, хранящая количество ненужных task'ов во время сортировки
+let needed = 0; // Переменная, хранящая количество нужных task'ов во время сортировки
+let cl; // Переменная, хранящая class task'а
+let cl_change; // Переменная, хранящая class task'a, который он получит после редактирования
+let div_stage_change; // Переменная, хранящая хранящая информацию, в какой столбец будет отнесён task после редактирования
+let style_change; // Переменная, хранящая цвет отображения названия task'а после редактирования
+let text_cr_dare_pars_mas = []; // Массив, хранящий все даты создания task'ов в удобном виде
+let text_ex_date_pars_mas = []; // Массив, хранящий все даты предполагаемого окончания task'ов в удобном виде
 let stages_collection_id = []; // Массив, хранящий id всех стадий
 
 $(document).ready(function() {
+
+    // Получение стадий
 
     axios.get('/api/v1/stages'
     
@@ -80,14 +74,14 @@ $(document).ready(function() {
 
     console.log(stages_collection_id);
 
+    // Получение task'ов
+
     axios.get('/api/v1/tasks'
         
         ).then((response) => {
 
             number = response.data.tasks.length;
-            console.log(number);
             bd = response.data.tasks;
-            console.log(bd);
 
             for (let i = 0; i < number; i++) {
 
@@ -101,19 +95,19 @@ $(document).ready(function() {
 
                 for (let f1 = 0; f1 < 10; f1++) {
                         
-                    conc = conc + text_cr_date[i][f1];
+                    text_cr_dare_pars = text_cr_dare_pars + text_cr_date[i][f1];
 
                 }
 
-                conc_mas.push(conc);
+                text_cr_dare_pars_mas.push(text_cr_dare_pars);
 
                 for (let f2 = 0; f2 < 10; f2++) {
                         
-                    sonc = sonc + text_ex_date[i][f2];
+                    text_ex_date_pars = text_ex_date_pars + text_ex_date[i][f2];
 
                 }
 
-                sonc_mas.push(sonc);
+                text_ex_date_pars_mas.push(text_ex_date_pars);
 
                 if (text_stage[i] == stages_collection_id[0]) {
 
@@ -145,6 +139,8 @@ $(document).ready(function() {
 
                 }
 
+                // Вывод task'ов
+
                 let main_div = $(`
             
                     <div class="${cl}" id="id${i}">
@@ -167,21 +163,21 @@ $(document).ready(function() {
                             <progress max="100" value="${text_progressbar[i]}"></progress>
                         </div>
                         <div class="start_date">
-                            <p>Дата начала - ${conc}</p>
+                            <p>Дата начала - ${text_cr_dare_pars}</p>
                         </div>
                         <div class="final_date">
-                            <p>Дата завершения - ${sonc}</p>
+                            <p>Дата завершения - ${text_ex_date_pars}</p>
                         </div>
                     </div>
                 
                 `).appendTo(div_stage);
 
                 
-                
+                // Кпопка редактирования
 
                 $(`#sel_r${i}`).click(function () {
 
-                    console.log(`conc = ${conc_mas[i]}`);
+                    console.log(`text_cr_dare_pars = ${text_cr_dare_pars_mas[i]}`);
                     
                     let main = document.querySelector("body");
                     main.classList.add("readable");
@@ -192,6 +188,8 @@ $(document).ready(function() {
                         </div>
                     
                     `).appendTo('html')
+
+                    // Вывод окна редактирования
 
                     let red_window = $(`
                     
@@ -231,37 +229,37 @@ $(document).ready(function() {
 
                     $('.ready_input').click(function() {
 
-                        a_s = stages_collection_id[0];
-                        cl_ch = "taskready";
-                        div_stage_ch = "div#ready";
-                        style_ch = "ready_color";
+                        stage_change = stages_collection_id[0];
+                        cl_change = "taskready";
+                        div_stage_change = "div#ready";
+                        style_change = "ready_color";
 
                     })
 
                     $('.progress_input').click(function() {
 
-                        a_s = stages_collection_id[1];
-                        cl_ch = "taskprogress";
-                        div_stage_ch = "div#progress";
-                        style_ch = "progress_color";
+                        stage_change = stages_collection_id[1];
+                        cl_change = "taskprogress";
+                        div_stage_change = "div#progress";
+                        style_change = "progress_color";
 
                     })
 
                     $('.review_input').click(function() {
 
-                        a_s = stages_collection_id[2];
-                        cl_ch = "taskreview";
-                        div_stage_ch = "div#review";
-                        style_ch = "review_color";
+                        stage_change = stages_collection_id[2];
+                        cl_change = "taskreview";
+                        div_stage_change = "div#review";
+                        style_change = "review_color";
 
                     })
 
                     $('.done_input').click(function() {
 
-                        a_s = stages_collection_id[3];
-                        cl_ch = "taskdone";
-                        div_stage_ch = "div#done";
-                        style_ch = "done_color";
+                        stage_change = stages_collection_id[3];
+                        cl_change = "taskdone";
+                        div_stage_change = "div#done";
+                        style_change = "done_color";
 
                     })
 
@@ -277,14 +275,10 @@ $(document).ready(function() {
 
                         main.classList.remove("readable");
                         title = document.querySelector('.title_input').value;
-                        title_cl = document.querySelector('.title_input');
                         value = document.querySelector('.value_input').value;
-                        value_cl = document.querySelector('.value_input');
                         progress = document.querySelector('.progressbar_input').value;
                         en = document.querySelector('.en_date_input').value;
-                        en_cl = document.querySelector('.en_date_input');
                         en_cor = Date.parse(en);
-                        a_s_cl = document.querySelector('.window_stage');
 
                         /*Валидация*/
 
@@ -356,7 +350,7 @@ $(document).ready(function() {
 
                         /*Валидация - конец*/
 
-                        if (title != "" && value != "" && en != "" && a_s != "") {
+                        if (title != "" && value != "" && en != "" && stage_change != "") {
 
                             console.log(text_id[i]);
                             $(`#id${i}`).remove();
@@ -367,7 +361,7 @@ $(document).ready(function() {
                                 title: title,
                                 value: value,
                                 expiredDate: en_cor,
-                                stage: a_s
+                                stage: stage_change
 
                             }).then(function() {
 
@@ -388,11 +382,13 @@ $(document).ready(function() {
                         title = "";
                         value = "";
                         en = "";
-                        a_s = "";
+                        stage_change = "";
 
                     })
 
                 })
+
+                // Кнопка удаления
 
                 $(`#sel_u${i}`).click(function() {
 
@@ -412,8 +408,8 @@ $(document).ready(function() {
 
                 })
 
-                conc = "";
-                sonc = "";
+                text_cr_dare_pars = "";
+                text_ex_date_pars = "";
 
             }
 
@@ -425,20 +421,19 @@ $(document).ready(function() {
 
         
 
-        
+    // Создание task'а
 
     $('#add').click(function() {
 
         t = document.querySelector('#title').value;
-        let t_cl = document.querySelector('#title');
         v = document.querySelector('#value').value;
-        let v_cl = document.querySelector('#value');
         d = document.querySelector('#date').value;
-        let d_cl = document.querySelector('#date');
         let d_cor = Date.parse(d);
         console.log(`Название задачи - ${t}`);
         console.log(`Содержание задачи - ${v}`);
         console.log(`Планируемая дата завершения задачи - ${d}`);
+
+        // Валидация
 
         if (t == "") {
 
@@ -531,21 +526,15 @@ $(document).ready(function() {
 
     });
 
-    
-
-    $('#test').click(function() {
-
-
-
-    });
+    // Кнопка сортировки по названию в стадии ready
 
     $('#sort_ready').click(function() {
 
-        let nas = [];
+        let nas = []; // Массив, хранящий id только определённые task'и, например только стадию ready ( и нули, которые обозначают не подходящие)
         title_s = [];
         title_id = [];
-        odin = 0;
-        bon = 0;
+        extra = 0;
+        needed = 0;
 
         console.log(`text_title в начале = ${text_title}`);
 
@@ -554,7 +543,7 @@ $(document).ready(function() {
             if (text_stage[a] == stages_collection_id[0]) {
 
                 nas[a] = text_title[a].toLowerCase() + a;
-                bon++;
+                needed++;
 
             }
 
@@ -569,7 +558,7 @@ $(document).ready(function() {
 
             if (nas[a] == 0) {
 
-                odin++;
+                extra++;
 
             }
 
@@ -579,7 +568,7 @@ $(document).ready(function() {
         console.log(title_s);
         // let title_id = [];
 
-        for (let b = odin + 1; b < number; b++) {
+        for (let b = extra + 1; b < number; b++) {
 
             title_id.push(title_s[b][title_s[b].length - 1]);
 
@@ -589,31 +578,33 @@ $(document).ready(function() {
         console.log(`title_id = ${title_id}`);
         console.log(`text_title = ${text_title}`);
         console.log(`title_s = ${title_s}`);
-        console.log(`odin = ${odin}`);
-        odin = odin + 1;
-        let conc_mas_dop = [];
-        let sonc_mas_dop = [];
+        console.log(`extra = ${extra}`);
+        extra = extra + 1;
+        let text_cr_dare_pars_mas_dop = [];
+        let text_ex_date_pars_mas_dop = [];
 
         $(".taskready").remove();
 
 
-        for (let c = 0; c < bon; c++) {
+        for (let c = 0; c < needed; c++) {
 
             for (let f1 = 0; f1 < 10; f1++) {
                         
-                conc = conc + text_cr_date[title_id[c]][f1];
+                text_cr_dare_pars = text_cr_dare_pars + text_cr_date[title_id[c]][f1];
 
             }
 
-            conc_mas_dop.push(conc);
+            text_cr_dare_pars_mas_dop.push(text_cr_dare_pars);
 
             for (let f2 = 0; f2 < 10; f2++) {
                     
-                sonc = sonc + text_ex_date[title_id[c]][f2];
+                text_ex_date_pars = text_ex_date_pars + text_ex_date[title_id[c]][f2];
 
             }
 
-            sonc_mas_dop.push(sonc);
+            text_ex_date_pars_mas_dop.push(text_ex_date_pars);
+
+            // Вывод отсортированных task'ов
 
             let sort_div = $(`
             
@@ -637,10 +628,10 @@ $(document).ready(function() {
                             <progress max="100" value="${text_progressbar[title_id[c]]}"></progress>
                         </div>
                         <div class="start_date">
-                            <p>Дата начала - ${conc}</p>
+                            <p>Дата начала - ${text_cr_dare_pars}</p>
                         </div>
                         <div class="final_date">
-                            <p>Дата завершения - ${sonc}</p>
+                            <p>Дата завершения - ${text_ex_date_pars}</p>
                         </div>
                     </div>
                 
@@ -648,12 +639,14 @@ $(document).ready(function() {
 
                 console.log(`text_title = ${text_title}`);
 
+            // Кнопка редактирования у отсортировнных task'ов
+
             $(`#sel_r${title_id[c]}`).click(function () {
                         
                 let main = document.querySelector("body");
                 main.classList.add("readable");
 
-                console.log(`sonc_mas_dop[title_id[c]] = ${sonc_mas_dop[c]}`)
+                console.log(`text_ex_date_pars_mas_dop[title_id[c]] = ${text_ex_date_pars_mas_dop[c]}`)
 
                 let pre_red_window = $(`
                 
@@ -700,37 +693,37 @@ $(document).ready(function() {
 
                 $('.ready_input').click(function() {
 
-                    a_s = stages_collection_id[0];
-                    cl_ch = "taskready";
-                    div_stage_ch = "div#ready";
-                    style_ch = "ready_color";
+                    stage_change = stages_collection_id[0];
+                    cl_change = "taskready";
+                    div_stage_change = "div#ready";
+                    style_change = "ready_color";
 
                 })
 
                 $('.progress_input').click(function() {
 
-                    a_s = stages_collection_id[1];
-                    cl_ch = "taskprogress";
-                    div_stage_ch = "div#progress";
-                    style_ch = "progress_color";
+                    stage_change = stages_collection_id[1];
+                    cl_change = "taskprogress";
+                    div_stage_change = "div#progress";
+                    style_change = "progress_color";
 
                 })
 
                 $('.review_input').click(function() {
 
-                    a_s = stages_collection_id[2];
-                    cl_ch = "taskreview";
-                    div_stage_ch = "div#review";
-                    style_ch = "review_color";
+                    stage_change = stages_collection_id[2];
+                    cl_change = "taskreview";
+                    div_stage_change = "div#review";
+                    style_change = "review_color";
 
                 })
 
                 $('.done_input').click(function() {
 
-                    a_s = stages_collection_id[3];
-                    cl_ch = "taskdone";
-                    div_stage_ch = "div#done";
-                    style_ch = "done_color";
+                    stage_change = stages_collection_id[3];
+                    cl_change = "taskdone";
+                    div_stage_change = "div#done";
+                    style_change = "done_color";
 
                 })
 
@@ -753,7 +746,7 @@ $(document).ready(function() {
                     en = document.querySelector('.en_date_input').value;
                     en_cl = document.querySelector('.en_date_input');
                     en_cor = Date.parse(en);
-                    a_s_cl = document.querySelector('.window_stage');
+                    stage_change_cl = document.querySelector('.window_stage');
 
                     /*Валидация*/
 
@@ -825,7 +818,7 @@ $(document).ready(function() {
 
                     /*Валидация - конец*/
 
-                    if (title != "" && value != "" && en != "" && a_s != "") {
+                    if (title != "" && value != "" && en != "" && stage_change != "") {
 
                         console.log(text_id[title_id[c]]);
                         $(`#id${[title_id[c]]}`).remove();
@@ -836,7 +829,7 @@ $(document).ready(function() {
                             title: title,
                             value: value,
                             expiredDate: en_cor,
-                            stage: a_s
+                            stage: stage_change
 
                         }).then(function() {
 
@@ -856,7 +849,7 @@ $(document).ready(function() {
                     title = "";
                     value = "";
                     en = "";
-                    a_s = "";
+                    stage_change = "";
 
                 })
 
@@ -879,8 +872,8 @@ $(document).ready(function() {
 
             })
 
-            conc = "";
-            sonc = "";
+            text_cr_dare_pars = "";
+            text_ex_date_pars = "";
 
         }
 
@@ -894,8 +887,8 @@ $(document).ready(function() {
         let nas = [];
         title_s = [];
         title_id = [];
-        odin = 0;
-        bon = 0;
+        extra = 0;
+        needed = 0;
 
         console.log(`text_title в начале = ${text_title}`);
 
@@ -904,7 +897,7 @@ $(document).ready(function() {
             if (text_stage[a] == stages_collection_id[0]) {
 
                 nas[a] = text_cr_date[a].toLowerCase() + a;
-                bon++;
+                needed++;
 
             }
 
@@ -919,7 +912,7 @@ $(document).ready(function() {
 
             if (nas[a] == 0) {
 
-                odin++;
+                extra++;
 
             }
 
@@ -929,7 +922,7 @@ $(document).ready(function() {
         console.log(`Сортированные даты = ${title_s}`);
         // let title_id = [];
 
-        for (let b = odin + 1; b < number; b++) {
+        for (let b = extra + 1; b < number; b++) {
 
             title_id.push(title_s[b][title_s[b].length - 1]);
 
@@ -939,31 +932,31 @@ $(document).ready(function() {
         console.log(`title_id = ${title_id}`);
         console.log(`text_title = ${text_title}`);
         console.log(`title_s = ${title_s}`);
-        console.log(`odin = ${odin}`);
-        odin = odin + 1;
-        let conc_mas_dop = [];
-        let sonc_mas_dop = [];
+        console.log(`extra = ${extra}`);
+        extra = extra + 1;
+        let text_cr_dare_pars_mas_dop = [];
+        let text_ex_date_pars_mas_dop = [];
 
         $(".taskready").remove();
 
 
-        for (let c = 0; c < bon; c++) {
+        for (let c = 0; c < needed; c++) {
 
             for (let f1 = 0; f1 < 10; f1++) {
                         
-                conc = conc + text_cr_date[title_id[c]][f1];
+                text_cr_dare_pars = text_cr_dare_pars + text_cr_date[title_id[c]][f1];
 
             }
 
-            conc_mas_dop.push(conc);
+            text_cr_dare_pars_mas_dop.push(text_cr_dare_pars);
 
             for (let f2 = 0; f2 < 10; f2++) {
                     
-                sonc = sonc + text_ex_date[title_id[c]][f2];
+                text_ex_date_pars = text_ex_date_pars + text_ex_date[title_id[c]][f2];
 
             }
 
-            sonc_mas_dop.push(sonc);
+            text_ex_date_pars_mas_dop.push(text_ex_date_pars);
 
             let sort_div = $(`
             
@@ -987,10 +980,10 @@ $(document).ready(function() {
                             <progress max="100" value="${text_progressbar[title_id[c]]}"></progress>
                         </div>
                         <div class="start_date">
-                            <p>Дата начала - ${conc}</p>
+                            <p>Дата начала - ${text_cr_dare_pars}</p>
                         </div>
                         <div class="final_date">
-                            <p>Дата завершения - ${sonc}</p>
+                            <p>Дата завершения - ${text_ex_date_pars}</p>
                         </div>
                     </div>
                 
@@ -1048,37 +1041,37 @@ $(document).ready(function() {
 
                 $('.ready_input').click(function() {
 
-                    a_s = stages_collection_id[0];
-                    cl_ch = "taskready";
-                    div_stage_ch = "div#ready";
-                    style_ch = "ready_color";
+                    stage_change = stages_collection_id[0];
+                    cl_change = "taskready";
+                    div_stage_change = "div#ready";
+                    style_change = "ready_color";
 
                 })
 
                 $('.progress_input').click(function() {
 
-                    a_s = stages_collection_id[1];
-                    cl_ch = "taskprogress";
-                    div_stage_ch = "div#progress";
-                    style_ch = "progress_color";
+                    stage_change = stages_collection_id[1];
+                    cl_change = "taskprogress";
+                    div_stage_change = "div#progress";
+                    style_change = "progress_color";
 
                 })
 
                 $('.review_input').click(function() {
 
-                    a_s = stages_collection_id[2];
-                    cl_ch = "taskreview";
-                    div_stage_ch = "div#review";
-                    style_ch = "review_color";
+                    stage_change = stages_collection_id[2];
+                    cl_change = "taskreview";
+                    div_stage_change = "div#review";
+                    style_change = "review_color";
 
                 })
 
                 $('.done_input').click(function() {
 
-                    a_s = stages_collection_id[3];
-                    cl_ch = "taskdone";
-                    div_stage_ch = "div#done";
-                    style_ch = "done_color";
+                    stage_change = stages_collection_id[3];
+                    cl_change = "taskdone";
+                    div_stage_change = "div#done";
+                    style_change = "done_color";
 
                 })
 
@@ -1101,7 +1094,7 @@ $(document).ready(function() {
                     en = document.querySelector('.en_date_input').value;
                     en_cl = document.querySelector('.en_date_input');
                     en_cor = Date.parse(en);
-                    a_s_cl = document.querySelector('.window_stage');
+                    stage_change_cl = document.querySelector('.window_stage');
 
                     /*Валидация*/
 
@@ -1173,7 +1166,7 @@ $(document).ready(function() {
 
                     /*Валидация - конец*/
 
-                    if (title != "" && value != "" && en != "" && a_s != "") {
+                    if (title != "" && value != "" && en != "" && stage_change != "") {
 
                         console.log(text_id[title_id[c]]);
                         $(`#id${[title_id[c]]}`).remove();
@@ -1184,7 +1177,7 @@ $(document).ready(function() {
                             title: title,
                             value: value,
                             expiredDate: en_cor,
-                            stage: a_s
+                            stage: stage_change
 
                         }).then(function() {
 
@@ -1204,7 +1197,7 @@ $(document).ready(function() {
                     title = "";
                     value = "";
                     en = "";
-                    a_s = "";
+                    stage_change = "";
 
                 })
 
@@ -1227,8 +1220,8 @@ $(document).ready(function() {
 
             })
 
-            conc = "";
-            sonc = "";
+            text_cr_dare_pars = "";
+            text_ex_date_pars = "";
 
         }
 
@@ -1242,8 +1235,8 @@ $(document).ready(function() {
         let nas = [];
         title_s = [];
         title_id = [];
-        odin = 0;
-        bon = 0;
+        extra = 0;
+        needed = 0;
 
         console.log(`text_title в начале = ${text_title}`);
 
@@ -1252,7 +1245,7 @@ $(document).ready(function() {
             if (text_stage[a] == stages_collection_id[0]) {
 
                 nas[a] = text_ex_date[a].toLowerCase() + a;
-                bon++;
+                needed++;
 
             }
 
@@ -1267,7 +1260,7 @@ $(document).ready(function() {
 
             if (nas[a] == 0) {
 
-                odin++;
+                extra++;
 
             }
 
@@ -1277,7 +1270,7 @@ $(document).ready(function() {
         console.log(`Сортированные даты = ${title_s}`);
         // let title_id = [];
 
-        for (let b = odin + 1; b < number; b++) {
+        for (let b = extra + 1; b < number; b++) {
 
             title_id.push(title_s[b][title_s[b].length - 1]);
 
@@ -1287,31 +1280,31 @@ $(document).ready(function() {
         console.log(`title_id = ${title_id}`);
         console.log(`text_title = ${text_title}`);
         console.log(`title_s = ${title_s}`);
-        console.log(`odin = ${odin}`);
-        odin = odin + 1;
-        let conc_mas_dop = [];
-        let sonc_mas_dop = [];
+        console.log(`extra = ${extra}`);
+        extra = extra + 1;
+        let text_cr_dare_pars_mas_dop = [];
+        let text_ex_date_pars_mas_dop = [];
 
         $(".taskready").remove();
 
 
-        for (let c = 0; c < bon; c++) {
+        for (let c = 0; c < needed; c++) {
 
             for (let f1 = 0; f1 < 10; f1++) {
                         
-                conc = conc + text_cr_date[title_id[c]][f1];
+                text_cr_dare_pars = text_cr_dare_pars + text_cr_date[title_id[c]][f1];
 
             }
 
-            conc_mas_dop.push(conc);
+            text_cr_dare_pars_mas_dop.push(text_cr_dare_pars);
 
             for (let f2 = 0; f2 < 10; f2++) {
                     
-                sonc = sonc + text_ex_date[title_id[c]][f2];
+                text_ex_date_pars = text_ex_date_pars + text_ex_date[title_id[c]][f2];
 
             }
 
-            sonc_mas_dop.push(sonc);
+            text_ex_date_pars_mas_dop.push(text_ex_date_pars);
 
             let sort_div = $(`
             
@@ -1335,10 +1328,10 @@ $(document).ready(function() {
                             <progress max="100" value="${text_progressbar[title_id[c]]}"></progress>
                         </div>
                         <div class="start_date">
-                            <p>Дата начала - ${conc}</p>
+                            <p>Дата начала - ${text_cr_dare_pars}</p>
                         </div>
                         <div class="final_date">
-                            <p>Дата завершения - ${sonc}</p>
+                            <p>Дата завершения - ${text_ex_date_pars}</p>
                         </div>
                     </div>
                 
@@ -1396,37 +1389,37 @@ $(document).ready(function() {
 
                 $('.ready_input').click(function() {
 
-                    a_s = stages_collection_id[0];
-                    cl_ch = "taskready";
-                    div_stage_ch = "div#ready";
-                    style_ch = "ready_color";
+                    stage_change = stages_collection_id[0];
+                    cl_change = "taskready";
+                    div_stage_change = "div#ready";
+                    style_change = "ready_color";
 
                 })
 
                 $('.progress_input').click(function() {
 
-                    a_s = stages_collection_id[1];
-                    cl_ch = "taskprogress";
-                    div_stage_ch = "div#progress";
-                    style_ch = "progress_color";
+                    stage_change = stages_collection_id[1];
+                    cl_change = "taskprogress";
+                    div_stage_change = "div#progress";
+                    style_change = "progress_color";
 
                 })
 
                 $('.review_input').click(function() {
 
-                    a_s = stages_collection_id[2];
-                    cl_ch = "taskreview";
-                    div_stage_ch = "div#review";
-                    style_ch = "review_color";
+                    stage_change = stages_collection_id[2];
+                    cl_change = "taskreview";
+                    div_stage_change = "div#review";
+                    style_change = "review_color";
 
                 })
 
                 $('.done_input').click(function() {
 
-                    a_s = stages_collection_id[3]
-                    cl_ch = "taskdone";
-                    div_stage_ch = "div#done";
-                    style_ch = "done_color";
+                    stage_change = stages_collection_id[3]
+                    cl_change = "taskdone";
+                    div_stage_change = "div#done";
+                    style_change = "done_color";
 
                 })
 
@@ -1449,7 +1442,7 @@ $(document).ready(function() {
                     en = document.querySelector('.en_date_input').value;
                     en_cl = document.querySelector('.en_date_input');
                     en_cor = Date.parse(en);
-                    a_s_cl = document.querySelector('.window_stage');
+                    stage_change_cl = document.querySelector('.window_stage');
 
                     /*Валидация*/
 
@@ -1521,7 +1514,7 @@ $(document).ready(function() {
 
                     /*Валидация - конец*/
 
-                    if (title != "" && value != "" && en != "" && a_s != "") {
+                    if (title != "" && value != "" && en != "" && stage_change != "") {
 
                         console.log(text_id[title_id[c]]);
                         $(`#id${[title_id[c]]}`).remove();
@@ -1532,7 +1525,7 @@ $(document).ready(function() {
                             title: title,
                             value: value,
                             expiredDate: en_cor,
-                            stage: a_s
+                            stage: stage_change
 
                         }).then(function() {
 
@@ -1552,7 +1545,7 @@ $(document).ready(function() {
                     title = "";
                     value = "";
                     en = "";
-                    a_s = "";
+                    stage_change = "";
 
                 })
 
@@ -1575,8 +1568,8 @@ $(document).ready(function() {
 
             })
 
-            conc = "";
-            sonc = "";
+            text_cr_dare_pars = "";
+            text_ex_date_pars = "";
 
         }
 
@@ -1590,8 +1583,8 @@ $(document).ready(function() {
         let nas = [];
         title_s = [];
         title_id = [];
-        odin = 0;
-        bon = 0;
+        extra = 0;
+        needed = 0;
 
         console.log(`text_title в начале = ${text_title}`);
 
@@ -1600,7 +1593,7 @@ $(document).ready(function() {
             if (text_stage[a] == stages_collection_id[1]) {
 
                 nas[a] = text_title[a].toLowerCase() + a;
-                bon++;
+                needed++;
 
             }
 
@@ -1615,7 +1608,7 @@ $(document).ready(function() {
 
             if (nas[a] == 0) {
 
-                odin++;
+                extra++;
 
             }
 
@@ -1625,7 +1618,7 @@ $(document).ready(function() {
         console.log(title_s);
         // let title_id = [];
 
-        for (let b = odin + 1; b < number; b++) {
+        for (let b = extra + 1; b < number; b++) {
 
             title_id.push(title_s[b][title_s[b].length - 1]);
 
@@ -1635,31 +1628,31 @@ $(document).ready(function() {
         console.log(`title_id = ${title_id}`);
         console.log(`text_title = ${text_title}`);
         console.log(`title_s = ${title_s}`);
-        console.log(`odin = ${odin}`);
-        odin = odin + 1;
-        let conc_mas_dop = [];
-        let sonc_mas_dop = [];
+        console.log(`extra = ${extra}`);
+        extra = extra + 1;
+        let text_cr_dare_pars_mas_dop = [];
+        let text_ex_date_pars_mas_dop = [];
 
         $(".taskprogress").remove();
 
 
-        for (let c = 0; c < bon; c++) {
+        for (let c = 0; c < needed; c++) {
 
             for (let f1 = 0; f1 < 10; f1++) {
                         
-                conc = conc + text_cr_date[title_id[c]][f1];
+                text_cr_dare_pars = text_cr_dare_pars + text_cr_date[title_id[c]][f1];
 
             }
 
-            conc_mas_dop.push(conc);
+            text_cr_dare_pars_mas_dop.push(text_cr_dare_pars);
 
             for (let f2 = 0; f2 < 10; f2++) {
                     
-                sonc = sonc + text_ex_date[title_id[c]][f2];
+                text_ex_date_pars = text_ex_date_pars + text_ex_date[title_id[c]][f2];
 
             }
 
-            sonc_mas_dop.push(sonc);
+            text_ex_date_pars_mas_dop.push(text_ex_date_pars);
 
             let sort_div = $(`
             
@@ -1683,10 +1676,10 @@ $(document).ready(function() {
                             <progress max="100" value="${text_progressbar[title_id[c]]}"></progress>
                         </div>
                         <div class="start_date">
-                            <p>Дата начала - ${conc}</p>
+                            <p>Дата начала - ${text_cr_dare_pars}</p>
                         </div>
                         <div class="final_date">
-                            <p>Дата завершения - ${sonc}</p>
+                            <p>Дата завершения - ${text_ex_date_pars}</p>
                         </div>
                     </div>
                 
@@ -1742,37 +1735,37 @@ $(document).ready(function() {
         
                     $('.ready_input').click(function() {
         
-                        a_s = stages_collection_id[0];
-                        cl_ch = "taskready";
-                        div_stage_ch = "div#ready";
-                        style_ch = "ready_color";
+                        stage_change = stages_collection_id[0];
+                        cl_change = "taskready";
+                        div_stage_change = "div#ready";
+                        style_change = "ready_color";
         
                     })
         
                     $('.progress_input').click(function() {
         
-                        a_s = stages_collection_id[1];
-                        cl_ch = "taskprogress";
-                        div_stage_ch = "div#progress";
-                        style_ch = "progress_color";
+                        stage_change = stages_collection_id[1];
+                        cl_change = "taskprogress";
+                        div_stage_change = "div#progress";
+                        style_change = "progress_color";
         
                     })
         
                     $('.review_input').click(function() {
         
-                        a_s = stages_collection_id[2];
-                        cl_ch = "taskreview";
-                        div_stage_ch = "div#review";
-                        style_ch = "review_color";
+                        stage_change = stages_collection_id[2];
+                        cl_change = "taskreview";
+                        div_stage_change = "div#review";
+                        style_change = "review_color";
         
                     })
         
                     $('.done_input').click(function() {
         
-                        a_s = stages_collection_id[3];
-                        cl_ch = "taskdone";
-                        div_stage_ch = "div#done";
-                        style_ch = "done_color";
+                        stage_change = stages_collection_id[3];
+                        cl_change = "taskdone";
+                        div_stage_change = "div#done";
+                        style_change = "done_color";
         
                     })
         
@@ -1795,7 +1788,7 @@ $(document).ready(function() {
                         en = document.querySelector('.en_date_input').value;
                         en_cl = document.querySelector('.en_date_input');
                         en_cor = Date.parse(en);
-                        a_s_cl = document.querySelector('.window_stage');
+                        stage_change_cl = document.querySelector('.window_stage');
         
                         /*Валидация*/
         
@@ -1867,7 +1860,7 @@ $(document).ready(function() {
         
                         /*Валидация - конец*/
         
-                        if (title != "" && value != "" && en != "" && a_s != "") {
+                        if (title != "" && value != "" && en != "" && stage_change != "") {
         
                             console.log(text_id[title_id[c]]);
                             $(`#id${[title_id[c]]}`).remove();
@@ -1878,7 +1871,7 @@ $(document).ready(function() {
                                 title: title,
                                 value: value,
                                 expiredDate: en_cor,
-                                stage: a_s
+                                stage: stage_change
         
                             }).then(function() {
         
@@ -1898,7 +1891,7 @@ $(document).ready(function() {
                         title = "";
                         value = "";
                         en = "";
-                        a_s = "";
+                        stage_change = "";
         
                     })
         
@@ -1921,8 +1914,8 @@ $(document).ready(function() {
         
                 })
 
-            sonc = " ";
-            conc = " ";
+            text_ex_date_pars = " ";
+            text_cr_dare_pars = " ";
 
         }
 
@@ -1938,8 +1931,8 @@ $(document).ready(function() {
         let nas = [];
         title_s = [];
         title_id = [];
-        odin = 0;
-        bon = 0;
+        extra = 0;
+        needed = 0;
 
         console.log(`text_title в начале = ${text_title}`);
 
@@ -1948,7 +1941,7 @@ $(document).ready(function() {
             if (text_stage[a] == stages_collection_id[1]) {
 
                 nas[a] = text_cr_date[a].toLowerCase() + a;
-                bon++;
+                needed++;
 
             }
 
@@ -1963,7 +1956,7 @@ $(document).ready(function() {
 
             if (nas[a] == 0) {
 
-                odin++;
+                extra++;
 
             }
 
@@ -1973,7 +1966,7 @@ $(document).ready(function() {
         console.log(`Сортированные даты = ${title_s}`);
         // let title_id = [];
 
-        for (let b = odin + 1; b < number; b++) {
+        for (let b = extra + 1; b < number; b++) {
 
             title_id.push(title_s[b][title_s[b].length - 1]);
 
@@ -1983,31 +1976,31 @@ $(document).ready(function() {
         console.log(`title_id = ${title_id}`);
         console.log(`text_title = ${text_title}`);
         console.log(`title_s = ${title_s}`);
-        console.log(`odin = ${odin}`);
-        odin = odin + 1;
-        let conc_mas_dop = [];
-        let sonc_mas_dop = [];
+        console.log(`extra = ${extra}`);
+        extra = extra + 1;
+        let text_cr_dare_pars_mas_dop = [];
+        let text_ex_date_pars_mas_dop = [];
 
         $(".taskprogress").remove();
 
 
-        for (let c = 0; c < bon; c++) {
+        for (let c = 0; c < needed; c++) {
 
             for (let f1 = 0; f1 < 10; f1++) {
                         
-                conc = conc + text_cr_date[title_id[c]][f1];
+                text_cr_dare_pars = text_cr_dare_pars + text_cr_date[title_id[c]][f1];
 
             }
 
-            conc_mas_dop.push(conc);
+            text_cr_dare_pars_mas_dop.push(text_cr_dare_pars);
 
             for (let f2 = 0; f2 < 10; f2++) {
                     
-                sonc = sonc + text_ex_date[title_id[c]][f2];
+                text_ex_date_pars = text_ex_date_pars + text_ex_date[title_id[c]][f2];
 
             }
 
-            sonc_mas_dop.push(sonc);
+            text_ex_date_pars_mas_dop.push(text_ex_date_pars);
 
             let sort_div = $(`
             
@@ -2031,10 +2024,10 @@ $(document).ready(function() {
                             <progress max="100" value="${text_progressbar[title_id[c]]}"></progress>
                         </div>
                         <div class="start_date">
-                            <p>Дата начала - ${conc}</p>
+                            <p>Дата начала - ${text_cr_dare_pars}</p>
                         </div>
                         <div class="final_date">
-                            <p>Дата завершения - ${sonc}</p>
+                            <p>Дата завершения - ${text_ex_date_pars}</p>
                         </div>
                     </div>
                 
@@ -2092,37 +2085,37 @@ $(document).ready(function() {
 
                 $('.ready_input').click(function() {
 
-                    a_s = stages_collection_id[0];
-                    cl_ch = "taskready";
-                    div_stage_ch = "div#ready";
-                    style_ch = "ready_color";
+                    stage_change = stages_collection_id[0];
+                    cl_change = "taskready";
+                    div_stage_change = "div#ready";
+                    style_change = "ready_color";
 
                 })
 
                 $('.progress_input').click(function() {
 
-                    a_s = stages_collection_id[1];
-                    cl_ch = "taskprogress";
-                    div_stage_ch = "div#progress";
-                    style_ch = "progress_color";
+                    stage_change = stages_collection_id[1];
+                    cl_change = "taskprogress";
+                    div_stage_change = "div#progress";
+                    style_change = "progress_color";
 
                 })
 
                 $('.review_input').click(function() {
 
-                    a_s = stages_collection_id[2];
-                    cl_ch = "taskreview";
-                    div_stage_ch = "div#review";
-                    style_ch = "review_color";
+                    stage_change = stages_collection_id[2];
+                    cl_change = "taskreview";
+                    div_stage_change = "div#review";
+                    style_change = "review_color";
 
                 })
 
                 $('.done_input').click(function() {
 
-                    a_s = stages_collection_id[3];
-                    cl_ch = "taskdone";
-                    div_stage_ch = "div#done";
-                    style_ch = "done_color";
+                    stage_change = stages_collection_id[3];
+                    cl_change = "taskdone";
+                    div_stage_change = "div#done";
+                    style_change = "done_color";
 
                 })
 
@@ -2145,7 +2138,7 @@ $(document).ready(function() {
                     en = document.querySelector('.en_date_input').value;
                     en_cl = document.querySelector('.en_date_input');
                     en_cor = Date.parse(en);
-                    a_s_cl = document.querySelector('.window_stage');
+                    stage_change_cl = document.querySelector('.window_stage');
 
                     /*Валидация*/
 
@@ -2217,7 +2210,7 @@ $(document).ready(function() {
 
                     /*Валидация - конец*/
 
-                    if (title != "" && value != "" && en != "" && a_s != "") {
+                    if (title != "" && value != "" && en != "" && stage_change != "") {
 
                         console.log(text_id[title_id[c]]);
                         $(`#id${[title_id[c]]}`).remove();
@@ -2230,7 +2223,7 @@ $(document).ready(function() {
                             title: title,
                             value: value,
                             expiredDate: en_cor,
-                            stage: a_s
+                            stage: stage_change
 
                         }).then(function() {
 
@@ -2250,7 +2243,7 @@ $(document).ready(function() {
                     title = "";
                     value = "";
                     en = "";
-                    a_s = "";
+                    stage_change = "";
 
                 })
 
@@ -2273,8 +2266,8 @@ $(document).ready(function() {
 
             })
 
-            conc = "";
-            sonc = "";
+            text_cr_dare_pars = "";
+            text_ex_date_pars = "";
 
         }
 
@@ -2288,8 +2281,8 @@ $(document).ready(function() {
         let nas = [];
         title_s = [];
         title_id = [];
-        odin = 0;
-        bon = 0;
+        extra = 0;
+        needed = 0;
 
         console.log(`text_title в начале = ${text_title}`);
 
@@ -2298,7 +2291,7 @@ $(document).ready(function() {
             if (text_stage[a] == stages_collection_id[1]) {
 
                 nas[a] = text_ex_date[a].toLowerCase() + a;
-                bon++;
+                needed++;
 
             }
 
@@ -2313,7 +2306,7 @@ $(document).ready(function() {
 
             if (nas[a] == 0) {
 
-                odin++;
+                extra++;
 
             }
 
@@ -2323,7 +2316,7 @@ $(document).ready(function() {
         console.log(`Сортированные даты = ${title_s}`);
         // let title_id = [];
 
-        for (let b = odin + 1; b < number; b++) {
+        for (let b = extra + 1; b < number; b++) {
 
             title_id.push(title_s[b][title_s[b].length - 1]);
 
@@ -2333,31 +2326,31 @@ $(document).ready(function() {
         console.log(`title_id = ${title_id}`);
         console.log(`text_title = ${text_title}`);
         console.log(`title_s = ${title_s}`);
-        console.log(`odin = ${odin}`);
-        odin = odin + 1;
-        let conc_mas_dop = [];
-        let sonc_mas_dop = [];
+        console.log(`extra = ${extra}`);
+        extra = extra + 1;
+        let text_cr_dare_pars_mas_dop = [];
+        let text_ex_date_pars_mas_dop = [];
 
         $(".taskprogress").remove();
 
 
-        for (let c = 0; c < bon; c++) {
+        for (let c = 0; c < needed; c++) {
 
             for (let f1 = 0; f1 < 10; f1++) {
                         
-                conc = conc + text_cr_date[title_id[c]][f1];
+                text_cr_dare_pars = text_cr_dare_pars + text_cr_date[title_id[c]][f1];
 
             }
 
-            conc_mas_dop.push(conc);
+            text_cr_dare_pars_mas_dop.push(text_cr_dare_pars);
 
             for (let f2 = 0; f2 < 10; f2++) {
                     
-                sonc = sonc + text_ex_date[title_id[c]][f2];
+                text_ex_date_pars = text_ex_date_pars + text_ex_date[title_id[c]][f2];
 
             }
 
-            sonc_mas_dop.push(sonc);
+            text_ex_date_pars_mas_dop.push(text_ex_date_pars);
 
             let sort_div = $(`
             
@@ -2381,10 +2374,10 @@ $(document).ready(function() {
                             <progress max="100" value="${text_progressbar[title_id[c]]}"></progress>
                         </div>
                         <div class="start_date">
-                            <p>Дата начала - ${conc}</p>
+                            <p>Дата начала - ${text_cr_dare_pars}</p>
                         </div>
                         <div class="final_date">
-                            <p>Дата завершения - ${sonc}</p>
+                            <p>Дата завершения - ${text_ex_date_pars}</p>
                         </div>
                     </div>
                 
@@ -2442,37 +2435,37 @@ $(document).ready(function() {
 
                 $('.ready_input').click(function() {
 
-                    a_s = stages_collection_id[0];
-                    cl_ch = "taskready";
-                    div_stage_ch = "div#ready";
-                    style_ch = "ready_color";
+                    stage_change = stages_collection_id[0];
+                    cl_change = "taskready";
+                    div_stage_change = "div#ready";
+                    style_change = "ready_color";
 
                 })
 
                 $('.progress_input').click(function() {
 
-                    a_s = stages_collection_id[1];
-                    cl_ch = "taskprogress";
-                    div_stage_ch = "div#progress";
-                    style_ch = "progress_color";
+                    stage_change = stages_collection_id[1];
+                    cl_change = "taskprogress";
+                    div_stage_change = "div#progress";
+                    style_change = "progress_color";
 
                 })
 
                 $('.review_input').click(function() {
 
-                    a_s = stages_collection_id[2];
-                    cl_ch = "taskreview";
-                    div_stage_ch = "div#review";
-                    style_ch = "review_color";
+                    stage_change = stages_collection_id[2];
+                    cl_change = "taskreview";
+                    div_stage_change = "div#review";
+                    style_change = "review_color";
 
                 })
 
                 $('.done_input').click(function() {
 
-                    a_s = stages_collection_id[3];
-                    cl_ch = "taskdone";
-                    div_stage_ch = "div#done";
-                    style_ch = "done_color";
+                    stage_change = stages_collection_id[3];
+                    cl_change = "taskdone";
+                    div_stage_change = "div#done";
+                    style_change = "done_color";
 
                 })
 
@@ -2495,7 +2488,7 @@ $(document).ready(function() {
                     en = document.querySelector('.en_date_input').value;
                     en_cl = document.querySelector('.en_date_input');
                     en_cor = Date.parse(en);
-                    a_s_cl = document.querySelector('.window_stage');
+                    stage_change_cl = document.querySelector('.window_stage');
 
                     /*Валидация*/
 
@@ -2567,7 +2560,7 @@ $(document).ready(function() {
 
                     /*Валидация - конец*/
 
-                    if (title != "" && value != "" && en != "" && a_s != "") {
+                    if (title != "" && value != "" && en != "" && stage_change != "") {
 
                         console.log(text_id[title_id[c]]);
                         $(`#id${[title_id[c]]}`).remove();
@@ -2580,7 +2573,7 @@ $(document).ready(function() {
                             title: title,
                             value: value,
                             expiredDate: en_cor,
-                            stage: a_s
+                            stage: stage_change
 
                         }).then(function() {
 
@@ -2600,7 +2593,7 @@ $(document).ready(function() {
                     title = "";
                     value = "";
                     en = "";
-                    a_s = "";
+                    stage_change = "";
 
                 })
 
@@ -2623,8 +2616,8 @@ $(document).ready(function() {
 
             })
 
-            conc = "";
-            sonc = "";
+            text_cr_dare_pars = "";
+            text_ex_date_pars = "";
 
         }
 
@@ -2638,8 +2631,8 @@ $(document).ready(function() {
         let nas = [];
         title_s = [];
         title_id = [];
-        odin = 0;
-        bon = 0;
+        extra = 0;
+        needed = 0;
 
         console.log(`text_title в начале = ${text_title}`);
 
@@ -2648,7 +2641,7 @@ $(document).ready(function() {
             if (text_stage[a] == stages_collection_id[2]) {
 
                 nas[a] = text_title[a].toLowerCase() + a;
-                bon++;
+                needed++;
 
             }
 
@@ -2663,7 +2656,7 @@ $(document).ready(function() {
 
             if (nas[a] == 0) {
 
-                odin++;
+                extra++;
 
             }
 
@@ -2673,7 +2666,7 @@ $(document).ready(function() {
         console.log(title_s);
         // let title_id = [];
 
-        for (let b = odin + 1; b < number; b++) {
+        for (let b = extra + 1; b < number; b++) {
 
             title_id.push(title_s[b][title_s[b].length - 1]);
 
@@ -2683,31 +2676,31 @@ $(document).ready(function() {
         console.log(`title_id = ${title_id}`);
         console.log(`text_title = ${text_title}`);
         console.log(`title_s = ${title_s}`);
-        console.log(`odin = ${odin}`);
-        odin = odin + 1;
-        let conc_mas_dop = [];
-        let sonc_mas_dop = [];
+        console.log(`extra = ${extra}`);
+        extra = extra + 1;
+        let text_cr_dare_pars_mas_dop = [];
+        let text_ex_date_pars_mas_dop = [];
 
         $(".taskreview").remove();
 
 
-        for (let c = 0; c < bon; c++) {
+        for (let c = 0; c < needed; c++) {
 
             for (let f1 = 0; f1 < 10; f1++) {
                         
-                conc = conc + text_cr_date[title_id[c]][f1];
+                text_cr_dare_pars = text_cr_dare_pars + text_cr_date[title_id[c]][f1];
 
             }
 
-            conc_mas_dop.push(conc);
+            text_cr_dare_pars_mas_dop.push(text_cr_dare_pars);
 
             for (let f2 = 0; f2 < 10; f2++) {
                     
-                sonc = sonc + text_ex_date[title_id[c]][f2];
+                text_ex_date_pars = text_ex_date_pars + text_ex_date[title_id[c]][f2];
 
             }
 
-            sonc_mas_dop.push(sonc);
+            text_ex_date_pars_mas_dop.push(text_ex_date_pars);
 
             let sort_div = $(`
             
@@ -2731,10 +2724,10 @@ $(document).ready(function() {
                             <progress max="100" value="${text_progressbar[title_id[c]]}"></progress>
                         </div>
                         <div class="start_date">
-                            <p>Дата начала - ${conc}</p>
+                            <p>Дата начала - ${text_cr_dare_pars}</p>
                         </div>
                         <div class="final_date">
-                            <p>Дата завершения - ${sonc}</p>
+                            <p>Дата завершения - ${text_ex_date_pars}</p>
                         </div>
                     </div>
                 
@@ -2790,37 +2783,37 @@ $(document).ready(function() {
         
                     $('.ready_input').click(function() {
         
-                        a_s = stages_collection_id[0];
-                        cl_ch = "taskready";
-                        div_stage_ch = "div#ready";
-                        style_ch = "ready_color";
+                        stage_change = stages_collection_id[0];
+                        cl_change = "taskready";
+                        div_stage_change = "div#ready";
+                        style_change = "ready_color";
         
                     })
         
                     $('.progress_input').click(function() {
         
-                        a_s = stages_collection_id[1]
-                        cl_ch = "taskprogress";
-                        div_stage_ch = "div#progress";
-                        style_ch = "progress_color";
+                        stage_change = stages_collection_id[1]
+                        cl_change = "taskprogress";
+                        div_stage_change = "div#progress";
+                        style_change = "progress_color";
         
                     })
         
                     $('.review_input').click(function() {
         
-                        a_s = stages_collection_id[2];
-                        cl_ch = "taskreview";
-                        div_stage_ch = "div#review";
-                        style_ch = "review_color";
+                        stage_change = stages_collection_id[2];
+                        cl_change = "taskreview";
+                        div_stage_change = "div#review";
+                        style_change = "review_color";
         
                     })
         
                     $('.done_input').click(function() {
         
-                        a_s = stages_collection_id[3];
-                        cl_ch = "taskdone";
-                        div_stage_ch = "div#done";
-                        style_ch = "done_color";
+                        stage_change = stages_collection_id[3];
+                        cl_change = "taskdone";
+                        div_stage_change = "div#done";
+                        style_change = "done_color";
         
                     })
         
@@ -2843,7 +2836,7 @@ $(document).ready(function() {
                         en = document.querySelector('.en_date_input').value;
                         en_cl = document.querySelector('.en_date_input');
                         en_cor = Date.parse(en);
-                        a_s_cl = document.querySelector('.window_stage');
+                        stage_change_cl = document.querySelector('.window_stage');
         
                         /*Валидация*/
         
@@ -2915,7 +2908,7 @@ $(document).ready(function() {
         
                         /*Валидация - конец*/
         
-                        if (title != "" && value != "" && en != "" && a_s != "") {
+                        if (title != "" && value != "" && en != "" && stage_change != "") {
         
                             console.log(text_id[title_id[c]]);
                             $(`#id${[title_id[c]]}`).remove();
@@ -2926,7 +2919,7 @@ $(document).ready(function() {
                                 title: title,
                                 value: value,
                                 expiredDate: en_cor,
-                                stage: a_s
+                                stage: stage_change
         
                             }).then(function() {
         
@@ -2946,7 +2939,7 @@ $(document).ready(function() {
                         title = "";
                         value = "";
                         en = "";
-                        a_s = "";
+                        stage_change = "";
         
                     })
         
@@ -2969,8 +2962,8 @@ $(document).ready(function() {
         
                 })
 
-            conc = "";
-            sonc = "";
+            text_cr_dare_pars = "";
+            text_ex_date_pars = "";
 
         }
 
@@ -2984,8 +2977,8 @@ $(document).ready(function() {
         let nas = [];
         title_s = [];
         title_id = [];
-        odin = 0;
-        bon = 0;
+        extra = 0;
+        needed = 0;
 
         console.log(`text_title в начале = ${text_title}`);
 
@@ -2994,7 +2987,7 @@ $(document).ready(function() {
             if (text_stage[a] == stages_collection_id[2]) {
 
                 nas[a] = text_cr_date[a].toLowerCase() + a;
-                bon++;
+                needed++;
 
             }
 
@@ -3009,7 +3002,7 @@ $(document).ready(function() {
 
             if (nas[a] == 0) {
 
-                odin++;
+                extra++;
 
             }
 
@@ -3019,7 +3012,7 @@ $(document).ready(function() {
         console.log(`Сортированные даты = ${title_s}`);
         // let title_id = [];
 
-        for (let b = odin + 1; b < number; b++) {
+        for (let b = extra + 1; b < number; b++) {
 
             title_id.push(title_s[b][title_s[b].length - 1]);
 
@@ -3029,31 +3022,31 @@ $(document).ready(function() {
         console.log(`title_id = ${title_id}`);
         console.log(`text_title = ${text_title}`);
         console.log(`title_s = ${title_s}`);
-        console.log(`odin = ${odin}`);
-        odin = odin + 1;
-        let conc_mas_dop = [];
-        let sonc_mas_dop = [];
+        console.log(`extra = ${extra}`);
+        extra = extra + 1;
+        let text_cr_dare_pars_mas_dop = [];
+        let text_ex_date_pars_mas_dop = [];
 
         $(".taskreview").remove();
 
 
-        for (let c = 0; c < bon; c++) {
+        for (let c = 0; c < needed; c++) {
 
             for (let f1 = 0; f1 < 10; f1++) {
                         
-                conc = conc + text_cr_date[title_id[c]][f1];
+                text_cr_dare_pars = text_cr_dare_pars + text_cr_date[title_id[c]][f1];
 
             }
 
-            conc_mas_dop.push(conc);
+            text_cr_dare_pars_mas_dop.push(text_cr_dare_pars);
 
             for (let f2 = 0; f2 < 10; f2++) {
                     
-                sonc = sonc + text_ex_date[title_id[c]][f2];
+                text_ex_date_pars = text_ex_date_pars + text_ex_date[title_id[c]][f2];
 
             }
 
-            sonc_mas_dop.push(sonc);
+            text_ex_date_pars_mas_dop.push(text_ex_date_pars);
 
             let sort_div = $(`
             
@@ -3077,10 +3070,10 @@ $(document).ready(function() {
                             <progress max="100" value="${text_progressbar[title_id[c]]}"></progress>
                         </div>
                         <div class="start_date">
-                            <p>Дата начала - ${conc}</p>
+                            <p>Дата начала - ${text_cr_dare_pars}</p>
                         </div>
                         <div class="final_date">
-                            <p>Дата завершения - ${sonc}</p>
+                            <p>Дата завершения - ${text_ex_date_pars}</p>
                         </div>
                     </div>
                 
@@ -3138,37 +3131,37 @@ $(document).ready(function() {
 
                 $('.ready_input').click(function() {
 
-                    a_s = stages_collection_id[0];
-                    cl_ch = "taskready";
-                    div_stage_ch = "div#ready";
-                    style_ch = "ready_color";
+                    stage_change = stages_collection_id[0];
+                    cl_change = "taskready";
+                    div_stage_change = "div#ready";
+                    style_change = "ready_color";
 
                 })
 
                 $('.progress_input').click(function() {
 
-                    a_s = stages_collection_id[1];
-                    cl_ch = "taskprogress";
-                    div_stage_ch = "div#progress";
-                    style_ch = "progress_color";
+                    stage_change = stages_collection_id[1];
+                    cl_change = "taskprogress";
+                    div_stage_change = "div#progress";
+                    style_change = "progress_color";
 
                 })
 
                 $('.review_input').click(function() {
 
-                    a_s = stages_collection_id[2];
-                    cl_ch = "taskreview";
-                    div_stage_ch = "div#review";
-                    style_ch = "review_color";
+                    stage_change = stages_collection_id[2];
+                    cl_change = "taskreview";
+                    div_stage_change = "div#review";
+                    style_change = "review_color";
 
                 })
 
                 $('.done_input').click(function() {
 
-                    a_s = stages_collection_id[3];
-                    cl_ch = "taskdone";
-                    div_stage_ch = "div#done";
-                    style_ch = "done_color";
+                    stage_change = stages_collection_id[3];
+                    cl_change = "taskdone";
+                    div_stage_change = "div#done";
+                    style_change = "done_color";
 
                 })
 
@@ -3191,7 +3184,7 @@ $(document).ready(function() {
                     en = document.querySelector('.en_date_input').value;
                     en_cl = document.querySelector('.en_date_input');
                     en_cor = Date.parse(en);
-                    a_s_cl = document.querySelector('.window_stage');
+                    stage_change_cl = document.querySelector('.window_stage');
 
                     /*Валидация*/
 
@@ -3263,7 +3256,7 @@ $(document).ready(function() {
 
                     /*Валидация - конец*/
 
-                    if (title != "" && value != "" && en != "" && a_s != "") {
+                    if (title != "" && value != "" && en != "" && stage_change != "") {
 
                         console.log(text_id[title_id[c]]);
                         $(`#id${[title_id[c]]}`).remove();
@@ -3276,7 +3269,7 @@ $(document).ready(function() {
                             title: title,
                             value: value,
                             expiredDate: en_cor,
-                            stage: a_s
+                            stage: stage_change
 
                         }).then(function() {
 
@@ -3296,7 +3289,7 @@ $(document).ready(function() {
                     title = "";
                     value = "";
                     en = "";
-                    a_s = "";
+                    stage_change = "";
 
                 })
 
@@ -3319,8 +3312,8 @@ $(document).ready(function() {
 
             })
 
-            conc = "";
-            sonc = "";
+            text_cr_dare_pars = "";
+            text_ex_date_pars = "";
 
         }
 
@@ -3334,8 +3327,8 @@ $(document).ready(function() {
         let nas = [];
         title_s = [];
         title_id = [];
-        odin = 0;
-        bon = 0;
+        extra = 0;
+        needed = 0;
 
         console.log(`text_title в начале = ${text_title}`);
 
@@ -3344,7 +3337,7 @@ $(document).ready(function() {
             if (text_stage[a] == stages_collection_id[2]) {
 
                 nas[a] = text_ex_date[a].toLowerCase() + a;
-                bon++;
+                needed++;
 
             }
 
@@ -3359,7 +3352,7 @@ $(document).ready(function() {
 
             if (nas[a] == 0) {
 
-                odin++;
+                extra++;
 
             }
 
@@ -3369,7 +3362,7 @@ $(document).ready(function() {
         console.log(`Сортированные даты = ${title_s}`);
         // let title_id = [];
 
-        for (let b = odin + 1; b < number; b++) {
+        for (let b = extra + 1; b < number; b++) {
 
             title_id.push(title_s[b][title_s[b].length - 1]);
 
@@ -3379,31 +3372,31 @@ $(document).ready(function() {
         console.log(`title_id = ${title_id}`);
         console.log(`text_title = ${text_title}`);
         console.log(`title_s = ${title_s}`);
-        console.log(`odin = ${odin}`);
-        odin = odin + 1;
-        let conc_mas_dop = [];
-        let sonc_mas_dop = [];
+        console.log(`extra = ${extra}`);
+        extra = extra + 1;
+        let text_cr_dare_pars_mas_dop = [];
+        let text_ex_date_pars_mas_dop = [];
 
         $(".taskreview").remove();
 
 
-        for (let c = 0; c < bon; c++) {
+        for (let c = 0; c < needed; c++) {
 
             for (let f1 = 0; f1 < 10; f1++) {
                         
-                conc = conc + text_cr_date[title_id[c]][f1];
+                text_cr_dare_pars = text_cr_dare_pars + text_cr_date[title_id[c]][f1];
 
             }
 
-            conc_mas_dop.push(conc);
+            text_cr_dare_pars_mas_dop.push(text_cr_dare_pars);
 
             for (let f2 = 0; f2 < 10; f2++) {
                     
-                sonc = sonc + text_ex_date[title_id[c]][f2];
+                text_ex_date_pars = text_ex_date_pars + text_ex_date[title_id[c]][f2];
 
             }
 
-            sonc_mas_dop.push(sonc);
+            text_ex_date_pars_mas_dop.push(text_ex_date_pars);
 
             let sort_div = $(`
             
@@ -3427,10 +3420,10 @@ $(document).ready(function() {
                             <progress max="100" value="${text_progressbar[title_id[c]]}"></progress>
                         </div>
                         <div class="start_date">
-                            <p>Дата начала - ${conc}</p>
+                            <p>Дата начала - ${text_cr_dare_pars}</p>
                         </div>
                         <div class="final_date">
-                            <p>Дата завершения - ${sonc}</p>
+                            <p>Дата завершения - ${text_ex_date_pars}</p>
                         </div>
                     </div>
                 
@@ -3488,37 +3481,37 @@ $(document).ready(function() {
 
                 $('.ready_input').click(function() {
 
-                    a_s =  stages_collection_id[0];
-                    cl_ch = "taskready";
-                    div_stage_ch = "div#ready";
-                    style_ch = "ready_color";
+                    stage_change =  stages_collection_id[0];
+                    cl_change = "taskready";
+                    div_stage_change = "div#ready";
+                    style_change = "ready_color";
 
                 })
 
                 $('.progress_input').click(function() {
 
-                    a_s =  stages_collection_id[1];
-                    cl_ch = "taskprogress";
-                    div_stage_ch = "div#progress";
-                    style_ch = "progress_color";
+                    stage_change =  stages_collection_id[1];
+                    cl_change = "taskprogress";
+                    div_stage_change = "div#progress";
+                    style_change = "progress_color";
 
                 })
 
                 $('.review_input').click(function() {
 
-                    a_s =  stages_collection_id[2];
-                    cl_ch = "taskreview";
-                    div_stage_ch = "div#review";
-                    style_ch = "review_color";
+                    stage_change =  stages_collection_id[2];
+                    cl_change = "taskreview";
+                    div_stage_change = "div#review";
+                    style_change = "review_color";
 
                 })
 
                 $('.done_input').click(function() {
 
-                    a_s =  stages_collection_id[3];
-                    cl_ch = "taskdone";
-                    div_stage_ch = "div#done";
-                    style_ch = "done_color";
+                    stage_change =  stages_collection_id[3];
+                    cl_change = "taskdone";
+                    div_stage_change = "div#done";
+                    style_change = "done_color";
 
                 })
 
@@ -3541,7 +3534,7 @@ $(document).ready(function() {
                     en = document.querySelector('.en_date_input').value;
                     en_cl = document.querySelector('.en_date_input');
                     en_cor = Date.parse(en);
-                    a_s_cl = document.querySelector('.window_stage');
+                    stage_change_cl = document.querySelector('.window_stage');
 
                     /*Валидация*/
 
@@ -3613,7 +3606,7 @@ $(document).ready(function() {
 
                     /*Валидация - конец*/
 
-                    if (title != "" && value != "" && en != "" && a_s != "") {
+                    if (title != "" && value != "" && en != "" && stage_change != "") {
 
                         console.log(text_id[title_id[c]]);
                         $(`#id${[title_id[c]]}`).remove();
@@ -3626,7 +3619,7 @@ $(document).ready(function() {
                             title: title,
                             value: value,
                             expiredDate: en_cor,
-                            stage: a_s
+                            stage: stage_change
 
                         }).then(function() {
 
@@ -3646,7 +3639,7 @@ $(document).ready(function() {
                     title = "";
                     value = "";
                     en = "";
-                    a_s = "";
+                    stage_change = "";
 
                 })
 
@@ -3669,8 +3662,8 @@ $(document).ready(function() {
 
             })
 
-            conc = "";
-            sonc = "";
+            text_cr_dare_pars = "";
+            text_ex_date_pars = "";
 
         }
 
@@ -3684,8 +3677,8 @@ $(document).ready(function() {
         let nas = [];
         title_s = [];
         title_id = [];
-        odin = 0;
-        bon = 0;
+        extra = 0;
+        needed = 0;
 
         console.log(`text_title в начале = ${text_title}`);
 
@@ -3694,7 +3687,7 @@ $(document).ready(function() {
             if (text_stage[a] ==  stages_collection_id[3]) {
 
                 nas[a] = text_title[a].toLowerCase() + a;
-                bon++;
+                needed++;
 
             }
 
@@ -3709,7 +3702,7 @@ $(document).ready(function() {
 
             if (nas[a] == 0) {
 
-                odin++;
+                extra++;
 
             }
 
@@ -3719,7 +3712,7 @@ $(document).ready(function() {
         console.log(title_s);
         // let title_id = [];
 
-        for (let b = odin; b < number; b++) {
+        for (let b = extra; b < number; b++) {
 
             title_id.push(title_s[b][title_s[b].length - 1]);
 
@@ -3729,31 +3722,31 @@ $(document).ready(function() {
         console.log(`title_id = ${title_id}`);
         console.log(`text_title = ${text_title}`);
         console.log(`title_s = ${title_s}`);
-        console.log(`odin = ${odin}`);
-        odin = odin + 1;
-        let conc_mas_dop = [];
-        let sonc_mas_dop = [];
+        console.log(`extra = ${extra}`);
+        extra = extra + 1;
+        let text_cr_dare_pars_mas_dop = [];
+        let text_ex_date_pars_mas_dop = [];
 
         $(".taskdone").remove();
 
 
-        for (let c = 0; c < bon; c++) {
+        for (let c = 0; c < needed; c++) {
 
             for (let f1 = 0; f1 < 10; f1++) {
                         
-                conc = conc + text_cr_date[title_id[c]][f1];
+                text_cr_dare_pars = text_cr_dare_pars + text_cr_date[title_id[c]][f1];
 
             }
 
-            conc_mas_dop.push(conc);
+            text_cr_dare_pars_mas_dop.push(text_cr_dare_pars);
 
             for (let f2 = 0; f2 < 10; f2++) {
                     
-                sonc = sonc + text_ex_date[title_id[c]][f2];
+                text_ex_date_pars = text_ex_date_pars + text_ex_date[title_id[c]][f2];
 
             }
 
-            sonc_mas_dop.push(sonc);
+            text_ex_date_pars_mas_dop.push(text_ex_date_pars);
 
             let sort_div = $(`
             
@@ -3777,10 +3770,10 @@ $(document).ready(function() {
                             <progress max="100" value="${text_progressbar[title_id[c]]}"></progress>
                         </div>
                         <div class="start_date">
-                            <p>Дата начала - ${conc}</p>
+                            <p>Дата начала - ${text_cr_dare_pars}</p>
                         </div>
                         <div class="final_date">
-                            <p>Дата завершения - ${sonc}</p>
+                            <p>Дата завершения - ${text_ex_date_pars}</p>
                         </div>
                     </div>
                 
@@ -3836,37 +3829,37 @@ $(document).ready(function() {
         
                     $('.ready_input').click(function() {
         
-                        a_s =  stages_collection_id[0];
-                        cl_ch = "taskready";
-                        div_stage_ch = "div#ready";
-                        style_ch = "ready_color";
+                        stage_change =  stages_collection_id[0];
+                        cl_change = "taskready";
+                        div_stage_change = "div#ready";
+                        style_change = "ready_color";
         
                     })
         
                     $('.progress_input').click(function() {
         
-                        a_s =  stages_collection_id[1];
-                        cl_ch = "taskprogress";
-                        div_stage_ch = "div#progress";
-                        style_ch = "progress_color";
+                        stage_change =  stages_collection_id[1];
+                        cl_change = "taskprogress";
+                        div_stage_change = "div#progress";
+                        style_change = "progress_color";
         
                     })
         
                     $('.review_input').click(function() {
         
-                        a_s =  stages_collection_id[2];
-                        cl_ch = "taskreview";
-                        div_stage_ch = "div#review";
-                        style_ch = "review_color";
+                        stage_change =  stages_collection_id[2];
+                        cl_change = "taskreview";
+                        div_stage_change = "div#review";
+                        style_change = "review_color";
         
                     })
         
                     $('.done_input').click(function() {
         
-                        a_s =  stages_collection_id[3];
-                        cl_ch = "taskdone";
-                        div_stage_ch = "div#done";
-                        style_ch = "done_color";
+                        stage_change =  stages_collection_id[3];
+                        cl_change = "taskdone";
+                        div_stage_change = "div#done";
+                        style_change = "done_color";
         
                     })
         
@@ -3889,7 +3882,7 @@ $(document).ready(function() {
                         en = document.querySelector('.en_date_input').value;
                         en_cl = document.querySelector('.en_date_input');
                         en_cor = Date.parse(en);
-                        a_s_cl = document.querySelector('.window_stage');
+                        stage_change_cl = document.querySelector('.window_stage');
         
                         /*Валидация*/
         
@@ -3961,7 +3954,7 @@ $(document).ready(function() {
         
                         /*Валидация - конец*/
         
-                        if (title != "" && value != "" && en != "" && a_s != "") {
+                        if (title != "" && value != "" && en != "" && stage_change != "") {
         
                             console.log(text_id[title_id[c]]);
                             $(`#id${[title_id[c]]}`).remove();
@@ -3974,7 +3967,7 @@ $(document).ready(function() {
                                 title: title,
                                 value: value,
                                 expiredDate: en_cor,
-                                stage: a_s
+                                stage: stage_change
         
                             }).then(function() {
         
@@ -3994,7 +3987,7 @@ $(document).ready(function() {
                         title = "";
                         value = "";
                         en = "";
-                        a_s = "";
+                        stage_change = "";
         
                     })
         
@@ -4017,8 +4010,8 @@ $(document).ready(function() {
         
                 })
 
-            conc = "";
-            sonc = "";
+            text_cr_dare_pars = "";
+            text_ex_date_pars = "";
 
         }
 
@@ -4031,8 +4024,8 @@ $(document).ready(function() {
         let nas = [];
         title_s = [];
         title_id = [];
-        odin = 0;
-        bon = 0;
+        extra = 0;
+        needed = 0;
 
         console.log(`text_title в начале = ${text_title}`);
 
@@ -4041,7 +4034,7 @@ $(document).ready(function() {
             if (text_stage[a] ==  stages_collection_id[3]) {
 
                 nas[a] = text_cr_date[a].toLowerCase() + a;
-                bon++;
+                needed++;
 
             }
 
@@ -4056,7 +4049,7 @@ $(document).ready(function() {
 
             if (nas[a] == 0) {
 
-                odin++;
+                extra++;
 
             }
 
@@ -4066,7 +4059,7 @@ $(document).ready(function() {
         console.log(`Сортированные даты = ${title_s}`);
         // let title_id = [];
 
-        for (let b = odin; b < number; b++) {
+        for (let b = extra; b < number; b++) {
 
             title_id.push(title_s[b][title_s[b].length - 1]);
 
@@ -4076,31 +4069,31 @@ $(document).ready(function() {
         console.log(`title_id = ${title_id}`);
         console.log(`text_title = ${text_title}`);
         console.log(`title_s = ${title_s}`);
-        console.log(`odin = ${odin}`);
-        odin = odin + 1;
-        let conc_mas_dop = [];
-        let sonc_mas_dop = [];
+        console.log(`extra = ${extra}`);
+        extra = extra + 1;
+        let text_cr_dare_pars_mas_dop = [];
+        let text_ex_date_pars_mas_dop = [];
 
         $(".taskdone").remove();
 
 
-        for (let c = 0; c < bon; c++) {
+        for (let c = 0; c < needed; c++) {
 
             for (let f1 = 0; f1 < 10; f1++) {
                         
-                conc = conc + text_cr_date[title_id[c]][f1];
+                text_cr_dare_pars = text_cr_dare_pars + text_cr_date[title_id[c]][f1];
 
             }
 
-            conc_mas_dop.push(conc);
+            text_cr_dare_pars_mas_dop.push(text_cr_dare_pars);
 
             for (let f2 = 0; f2 < 10; f2++) {
                     
-                sonc = sonc + text_ex_date[title_id[c]][f2];
+                text_ex_date_pars = text_ex_date_pars + text_ex_date[title_id[c]][f2];
 
             }
 
-            sonc_mas_dop.push(sonc);
+            text_ex_date_pars_mas_dop.push(text_ex_date_pars);
 
             let sort_div = $(`
             
@@ -4124,10 +4117,10 @@ $(document).ready(function() {
                             <progress max="100" value="${text_progressbar[title_id[c]]}"></progress>
                         </div>
                         <div class="start_date">
-                            <p>Дата начала - ${conc}</p>
+                            <p>Дата начала - ${text_cr_dare_pars}</p>
                         </div>
                         <div class="final_date">
-                            <p>Дата завершения - ${sonc}</p>
+                            <p>Дата завершения - ${text_ex_date_pars}</p>
                         </div>
                     </div>
                 
@@ -4185,37 +4178,37 @@ $(document).ready(function() {
 
                 $('.ready_input').click(function() {
 
-                    a_s =  stages_collection_id[0];
-                    cl_ch = "taskready";
-                    div_stage_ch = "div#ready";
-                    style_ch = "ready_color";
+                    stage_change =  stages_collection_id[0];
+                    cl_change = "taskready";
+                    div_stage_change = "div#ready";
+                    style_change = "ready_color";
 
                 })
 
                 $('.progress_input').click(function() {
 
-                    a_s =  stages_collection_id[1];
-                    cl_ch = "taskprogress";
-                    div_stage_ch = "div#progress";
-                    style_ch = "progress_color";
+                    stage_change =  stages_collection_id[1];
+                    cl_change = "taskprogress";
+                    div_stage_change = "div#progress";
+                    style_change = "progress_color";
 
                 })
 
                 $('.review_input').click(function() {
 
-                    a_s =  stages_collection_id[2];
-                    cl_ch = "taskreview";
-                    div_stage_ch = "div#review";
-                    style_ch = "review_color";
+                    stage_change =  stages_collection_id[2];
+                    cl_change = "taskreview";
+                    div_stage_change = "div#review";
+                    style_change = "review_color";
 
                 })
 
                 $('.done_input').click(function() {
 
-                    a_s =  stages_collection_id[3];
-                    cl_ch = "taskdone";
-                    div_stage_ch = "div#done";
-                    style_ch = "done_color";
+                    stage_change =  stages_collection_id[3];
+                    cl_change = "taskdone";
+                    div_stage_change = "div#done";
+                    style_change = "done_color";
 
                 })
 
@@ -4238,7 +4231,7 @@ $(document).ready(function() {
                     en = document.querySelector('.en_date_input').value;
                     en_cl = document.querySelector('.en_date_input');
                     en_cor = Date.parse(en);
-                    a_s_cl = document.querySelector('.window_stage');
+                    stage_change_cl = document.querySelector('.window_stage');
 
                     /*Валидация*/
 
@@ -4310,7 +4303,7 @@ $(document).ready(function() {
 
                     /*Валидация - конец*/
 
-                    if (title != "" && value != "" && en != "" && a_s != "") {
+                    if (title != "" && value != "" && en != "" && stage_change != "") {
 
                         console.log(text_id[title_id[c]]);
                         $(`#id${[title_id[c]]}`).remove();
@@ -4323,7 +4316,7 @@ $(document).ready(function() {
                             title: title,
                             value: value,
                             expiredDate: en_cor,
-                            stage: a_s
+                            stage: stage_change
 
                         }).then(function() {
 
@@ -4343,7 +4336,7 @@ $(document).ready(function() {
                     title = "";
                     value = "";
                     en = "";
-                    a_s = "";
+                    stage_change = "";
 
                 })
 
@@ -4366,8 +4359,8 @@ $(document).ready(function() {
 
             })
 
-            conc = "";
-            sonc = "";
+            text_cr_dare_pars = "";
+            text_ex_date_pars = "";
 
         }
 
@@ -4381,8 +4374,8 @@ $(document).ready(function() {
         let nas = [];
         title_s = [];
         title_id = [];
-        odin = 0;
-        bon = 0;
+        extra = 0;
+        needed = 0;
 
         console.log(`text_title в начале = ${text_title}`);
 
@@ -4391,7 +4384,7 @@ $(document).ready(function() {
             if (text_stage[a] ==  stages_collection_id[3]) {
 
                 nas[a] = text_ex_date[a].toLowerCase() + a;
-                bon++;
+                needed++;
 
             }
 
@@ -4406,7 +4399,7 @@ $(document).ready(function() {
 
             if (nas[a] == 0) {
 
-                odin++;
+                extra++;
 
             }
 
@@ -4416,7 +4409,7 @@ $(document).ready(function() {
         console.log(`Сортированные даты = ${title_s}`);
         // let title_id = [];
 
-        for (let b = odin; b < number; b++) {
+        for (let b = extra; b < number; b++) {
 
             title_id.push(title_s[b][title_s[b].length - 1]);
 
@@ -4426,31 +4419,31 @@ $(document).ready(function() {
         console.log(`title_id = ${title_id}`);
         console.log(`text_title = ${text_title}`);
         console.log(`title_s = ${title_s}`);
-        console.log(`odin = ${odin}`);
-        odin = odin + 1;
-        let conc_mas_dop = [];
-        let sonc_mas_dop = [];
+        console.log(`extra = ${extra}`);
+        extra = extra + 1;
+        let text_cr_dare_pars_mas_dop = [];
+        let text_ex_date_pars_mas_dop = [];
 
         $(".taskdone").remove();
 
 
-        for (let c = 0; c < bon; c++) {
+        for (let c = 0; c < needed; c++) {
 
             for (let f1 = 0; f1 < 10; f1++) {
                         
-                conc = conc + text_cr_date[title_id[c]][f1];
+                text_cr_dare_pars = text_cr_dare_pars + text_cr_date[title_id[c]][f1];
 
             }
 
-            conc_mas_dop.push(conc);
+            text_cr_dare_pars_mas_dop.push(text_cr_dare_pars);
 
             for (let f2 = 0; f2 < 10; f2++) {
                     
-                sonc = sonc + text_ex_date[title_id[c]][f2];
+                text_ex_date_pars = text_ex_date_pars + text_ex_date[title_id[c]][f2];
 
             }
 
-            sonc_mas_dop.push(sonc);
+            text_ex_date_pars_mas_dop.push(text_ex_date_pars);
 
             let sort_div = $(`
             
@@ -4474,10 +4467,10 @@ $(document).ready(function() {
                             <progress max="100" value="${text_progressbar[title_id[c]]}"></progress>
                         </div>
                         <div class="start_date">
-                            <p>Дата начала - ${conc}</p>
+                            <p>Дата начала - ${text_cr_dare_pars}</p>
                         </div>
                         <div class="final_date">
-                            <p>Дата завершения - ${sonc}</p>
+                            <p>Дата завершения - ${text_ex_date_pars}</p>
                         </div>
                     </div>
                 
@@ -4535,37 +4528,37 @@ $(document).ready(function() {
 
                 $('.ready_input').click(function() {
 
-                    a_s =  stages_collection_id[0];
-                    cl_ch = "taskready";
-                    div_stage_ch = "div#ready";
-                    style_ch = "ready_color";
+                    stage_change =  stages_collection_id[0];
+                    cl_change = "taskready";
+                    div_stage_change = "div#ready";
+                    style_change = "ready_color";
 
                 })
 
                 $('.progress_input').click(function() {
 
-                    a_s =  stages_collection_id[1];
-                    cl_ch = "taskprogress";
-                    div_stage_ch = "div#progress";
-                    style_ch = "progress_color";
+                    stage_change =  stages_collection_id[1];
+                    cl_change = "taskprogress";
+                    div_stage_change = "div#progress";
+                    style_change = "progress_color";
 
                 })
 
                 $('.review_input').click(function() {
 
-                    a_s =  stages_collection_id[2];
-                    cl_ch = "taskreview";
-                    div_stage_ch = "div#review";
-                    style_ch = "review_color";
+                    stage_change =  stages_collection_id[2];
+                    cl_change = "taskreview";
+                    div_stage_change = "div#review";
+                    style_change = "review_color";
 
                 })
 
                 $('.done_input').click(function() {
 
-                    a_s =  stages_collection_id[3];
-                    cl_ch = "taskdone";
-                    div_stage_ch = "div#done";
-                    style_ch = "done_color";
+                    stage_change =  stages_collection_id[3];
+                    cl_change = "taskdone";
+                    div_stage_change = "div#done";
+                    style_change = "done_color";
 
                 })
 
@@ -4588,7 +4581,7 @@ $(document).ready(function() {
                     en = document.querySelector('.en_date_input').value;
                     en_cl = document.querySelector('.en_date_input');
                     en_cor = Date.parse(en);
-                    a_s_cl = document.querySelector('.window_stage');
+                    stage_change_cl = document.querySelector('.window_stage');
 
                     /*Валидация*/
 
@@ -4660,7 +4653,7 @@ $(document).ready(function() {
 
                     /*Валидация - конец*/
 
-                    if (title != "" && value != "" && en != "" && a_s != "") {
+                    if (title != "" && value != "" && en != "" && stage_change != "") {
 
                         console.log(text_id[title_id[c]]);
                         $(`#id${[title_id[c]]}`).remove();
@@ -4673,7 +4666,7 @@ $(document).ready(function() {
                             title: title,
                             value: value,
                             expiredDate: en_cor,
-                            stage: a_s
+                            stage: stage_change
 
                         }).then(function() {
 
@@ -4693,7 +4686,7 @@ $(document).ready(function() {
                     title = "";
                     value = "";
                     en = "";
-                    a_s = "";
+                    stage_change = "";
 
                 })
 
@@ -4716,8 +4709,8 @@ $(document).ready(function() {
 
             })
 
-            conc = "";
-            sonc = "";
+            text_cr_dare_pars = "";
+            text_ex_date_pars = "";
 
         }
 
