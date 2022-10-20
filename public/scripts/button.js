@@ -143,7 +143,7 @@ $(document).ready(function() {
 
                 let main_div = $(`
             
-                    <div class="${cl}" id="id${i}">
+                    <div class="${cl}" id="${text_id[i]}">
                         <div class="header">
                             <div class="header_title">
                                 <center><p class="${style}">${text_title[i]}</p></center>
@@ -151,8 +151,8 @@ $(document).ready(function() {
                             <div class="menu">
                                 <input class="drop_button" value="..." type="button">
                                 <div class="drop_content">
-                                    <button value="red" id="sel_r${i}" class="redak">Редактировать</button>
-                                    <button value="udal" id="sel_u${i}" class="udalen">Удалить</button>
+                                    <button value="${text_id[i]}" id="sel_r${i}" class="redak">Редактировать</button>
+                                    <button value="${text_id[i]}" id="sel_u${i}" class="udalen">Удалить</button>
                                 </div>
                             </div>
                         </div>
@@ -172,241 +172,7 @@ $(document).ready(function() {
                 
                 `).appendTo(div_stage);
 
-                
-                // Кпопка редактирования
-
-                $(`#sel_r${i}`).click(function () {
-
-                    console.log(`text_cr_dare_pars = ${text_cr_dare_pars_mas[i]}`);
-                    
-                    let main = document.querySelector("body");
-                    main.classList.add("readable");
-
-                    let pre_red_window = $(`
-                    
-                        <div class="pre_red_window">
-                        </div>
-                    
-                    `).appendTo('html')
-
-                    // Вывод окна редактирования
-
-                    let red_window = $(`
-                    
-                        <div class="red_window">
-                            <div class="window_name">
-                                <center><h2>Редактирование</h2></center>
-                            </div>
-                            <div class="window_title">
-                                <center><input type="text" class="title_input" placeholder="Введите название"></center>
-                            </div>
-                            <div class="window_value">
-                                <center><input type="text" class="value_input" placeholder="Введите содержание"></center>
-                            </div>
-                            <div class="window_en_date">
-                                <center><input type="date" class="en_date_input" placeholder="Введите дату завершения"></center>
-                            </div>
-                            <div class="window_progress">
-                                <center><input type="range" min="0" max="100" class="progressbar_input"></center>
-                            </div>
-                            <div class="window_stage">
-                                <div class="window_ready"><center><input type="button" class="ready_input" value="Ready"></div>
-                                <div class="window_progress"><center><input type="button" class="progress_input" value="Progress"></div>
-                                <div class="window_review"><center><input type="button" class="review_input" value="Review"></div>
-                                <div class="window_done"><center><input type="button" class="done_input" value="Done"></div>
-                            </div>
-                            <div class="choice">
-                                <div class="cancel">
-                                    <center><input type="button" class="no_input" value="Отменить"></center>
-                                </div>
-                                <div class="approve">
-                                    <center><input type="button" class="yes_input" value="Сохранить"></center>
-                                </div>
-                            </div>
-                        </div>
-                    
-                    `).appendTo("html");
-
-                    $('.ready_input').click(function() {
-
-                        stage_change = stages_collection_id[0];
-                        cl_change = "taskready";
-                        div_stage_change = "div#ready";
-                        style_change = "ready_color";
-
-                    })
-
-                    $('.progress_input').click(function() {
-
-                        stage_change = stages_collection_id[1];
-                        cl_change = "taskprogress";
-                        div_stage_change = "div#progress";
-                        style_change = "progress_color";
-
-                    })
-
-                    $('.review_input').click(function() {
-
-                        stage_change = stages_collection_id[2];
-                        cl_change = "taskreview";
-                        div_stage_change = "div#review";
-                        style_change = "review_color";
-
-                    })
-
-                    $('.done_input').click(function() {
-
-                        stage_change = stages_collection_id[3];
-                        cl_change = "taskdone";
-                        div_stage_change = "div#done";
-                        style_change = "done_color";
-
-                    })
-
-                    $('.no_input').click(function() {
-
-                        $('.red_window').remove();
-                        $('.pre_red_window').remove();
-                        main.classList.remove("readable");
-
-                    })
-
-                    $('.yes_input').click(function() {
-
-                        main.classList.remove("readable");
-                        title = document.querySelector('.title_input').value;
-                        value = document.querySelector('.value_input').value;
-                        progress = document.querySelector('.progressbar_input').value;
-                        en = document.querySelector('.en_date_input').value;
-                        en_cor = Date.parse(en);
-
-                        /*Валидация*/
-
-                        if (title == "") {
-
-                            $('.title_input').css({
-
-                                'border-color': 'red',
-                                'border-width': '1px',
-                                'border-style': 'solid'
-                                
-                            });
-
-                        }
-
-                        if (title != "") {
-
-                            $('.title_input').css({
-
-                                'border-style': 'none'
-                                
-                            });
-
-                        }
-
-                        if (value == "") {
-
-                            $('.value_input').css({
-
-                                'border-color': 'red',
-                                'border-width': '1px',
-                                'border-style': 'solid'
-                                
-                            });
-
-                        }
-
-                        if (value != "") {
-
-                            $('.value_input').css({
-
-                                'border-style': 'none'
-                                
-                            });
-
-                        }
-
-                        if (en == "") {
-
-                            $('.en_date_input').css({
-
-                                'border-color': 'red',
-                                'border-width': '1px',
-                                'border-style': 'solid'
-                                
-                            });
-
-                        }
-
-                        if (en != "") {
-
-                            $('.en_date_input').css({
-
-                                'border-style': 'none'
-                                
-                            });
-
-                        }
-
-                        /*Валидация - конец*/
-
-                        if (title != "" && value != "" && en != "" && stage_change != "") {
-
-                            console.log(text_id[i]);
-                            $(`#id${i}`).remove();
-
-                            axios.patch(`/api/v1/tasks/${text_id[i]}`, {
-
-                                completeProgress: progress,
-                                title: title,
-                                value: value,
-                                expiredDate: en_cor,
-                                stage: stage_change
-
-                            }).then(function() {
-
-                                console.log("Query is successful");
-                                $('.red_window').remove();
-                                $('.pre_red_window').remove();
-                                
-                                location.reload();
-                    
-                            }).catch(function() {
-                    
-                                console.log("Query is not successful");
-                    
-                            });
-
-                        }
-
-                        title = "";
-                        value = "";
-                        en = "";
-                        stage_change = "";
-
-                    })
-
-                })
-
                 // Кнопка удаления
-
-                $(`#sel_u${i}`).click(function() {
-
-                    axios.delete(`/api/v1/tasks/${text_id[i]}`
-                        
-                        ).then(function() {
-
-                            console.log('Query is successful');
-                            $(`#id${i}`).remove();
-
-
-                        }).catch(function() {
-
-                            console.log('Query is not successful');
-
-                        })
-
-                })
 
                 text_cr_dare_pars = "";
                 text_ex_date_pars = "";
@@ -622,7 +388,7 @@ $(document).ready(function() {
 
             let sort_div = $(`
             
-                    <div class=${sort_class} id="id${[title_id[c]]}">
+                    <div class=${sort_class} id="id${text_id[title_id[c]]}">
                         <div class="header">
                             <div class="header_title">
                                 <center><p class=${sort_color}>${text_title[title_id[c]]}</p></center>
@@ -630,8 +396,8 @@ $(document).ready(function() {
                             <div class="menu">
                                 <input class="drop_button" value="..." type="button">
                                 <div class="drop_content">
-                                    <button value="red" id="sel_r${[title_id[c]]}" class="redak">Редактировать</button>
-                                    <button value="udal" id="sel_u${[title_id[c]]}" class="udalen">Удалить</button>
+                                    <button value="${text_id[title_id[c]]}" id="sel_r${[title_id[c]]}" class="redak">Редактировать</button>
+                                    <button value="${text_id[title_id[c]]}" id="sel_u${[title_id[c]]}" class="udalen">Удалить</button>
                                 </div>
                             </div>
                         </div>
@@ -732,6 +498,250 @@ $(document).ready(function() {
 
     });
 
-    
+
+
+    let proba = document.querySelector("#main_part");
+    proba.onclick = function(event) {
+
+        // Редактирование
+
+        if (event.target.className == 'redak') {
+
+        let ev = event.target.value;
+        
+        let main = document.querySelector("body");
+        main.classList.add("readable");
+
+        let pre_red_window = $(`
+        
+            <div class="pre_red_window">
+            </div>
+        
+        `).appendTo('html')
+
+        // Вывод окна редактирования
+
+        let red_window = $(`
+        
+            <div class="red_window">
+                <div class="window_name">
+                    <center><h2>Редактирование</h2></center>
+                </div>
+                <div class="window_title">
+                    <center><input type="text" class="title_input" placeholder="Введите название"></center>
+                </div>
+                <div class="window_value">
+                    <center><input type="text" class="value_input" placeholder="Введите содержание"></center>
+                </div>
+                <div class="window_en_date">
+                    <center><input type="date" class="en_date_input" placeholder="Введите дату завершения"></center>
+                </div>
+                <div class="window_progress">
+                    <center><input type="range" min="0" max="100" class="progressbar_input"></center>
+                </div>
+                <div class="window_stage">
+                    <div class="window_ready"><center><input type="button" class="ready_input" value="Ready"></div>
+                    <div class="window_progress"><center><input type="button" class="progress_input" value="Progress"></div>
+                    <div class="window_review"><center><input type="button" class="review_input" value="Review"></div>
+                    <div class="window_done"><center><input type="button" class="done_input" value="Done"></div>
+                </div>
+                <div class="choice">
+                    <div class="cancel">
+                        <center><input type="button" class="no_input" value="Отменить"></center>
+                    </div>
+                    <div class="approve">
+                        <center><input type="button" class="yes_input" value="Сохранить"></center>
+                    </div>
+                </div>
+            </div>
+        
+        `).appendTo("html");
+
+        $('.ready_input').click(function() {
+
+            stage_change = stages_collection_id[0];
+            cl_change = "taskready";
+            div_stage_change = "div#ready";
+            style_change = "ready_color";
+
+        })
+
+        $('.progress_input').click(function() {
+
+            stage_change = stages_collection_id[1];
+            cl_change = "taskprogress";
+            div_stage_change = "div#progress";
+            style_change = "progress_color";
+
+        })
+
+        $('.review_input').click(function() {
+
+            stage_change = stages_collection_id[2];
+            cl_change = "taskreview";
+            div_stage_change = "div#review";
+            style_change = "review_color";
+
+        })
+
+        $('.done_input').click(function() {
+
+            stage_change = stages_collection_id[3];
+            cl_change = "taskdone";
+            div_stage_change = "div#done";
+            style_change = "done_color";
+
+        })
+
+        $('.no_input').click(function() {
+
+            $('.red_window').remove();
+            $('.pre_red_window').remove();
+            main.classList.remove("readable");
+
+        })
+
+        $('.yes_input').click(function() {
+
+            main.classList.remove("readable");
+            title = document.querySelector('.title_input').value;
+            value = document.querySelector('.value_input').value;
+            progress = document.querySelector('.progressbar_input').value;
+            en = document.querySelector('.en_date_input').value;
+            en_cor = Date.parse(en);
+
+            /*Валидация*/
+
+            if (title == "") {
+
+                $('.title_input').css({
+
+                    'border-color': 'red',
+                    'border-width': '1px',
+                    'border-style': 'solid'
+                    
+                });
+
+            }
+
+            if (title != "") {
+
+                $('.title_input').css({
+
+                    'border-style': 'none'
+                    
+                });
+
+            }
+
+            if (value == "") {
+
+                $('.value_input').css({
+
+                    'border-color': 'red',
+                    'border-width': '1px',
+                    'border-style': 'solid'
+                    
+                });
+
+            }
+
+            if (value != "") {
+
+                $('.value_input').css({
+
+                    'border-style': 'none'
+                    
+                });
+
+            }
+
+            if (en == "") {
+
+                $('.en_date_input').css({
+
+                    'border-color': 'red',
+                    'border-width': '1px',
+                    'border-style': 'solid'
+                    
+                });
+
+            }
+
+            if (en != "") {
+
+                $('.en_date_input').css({
+
+                    'border-style': 'none'
+                    
+                });
+
+            }
+
+            /*Валидация - конец*/
+
+            if (title != "" && value != "" && en != "" && stage_change != "") {
+
+                console.log(ev);
+                $(`#${ev}`).remove();
+
+                axios.patch(`/api/v1/tasks/${ev}`, {
+
+                    completeProgress: progress,
+                    title: title,
+                    value: value,
+                    expiredDate: en_cor,
+                    stage: stage_change
+
+                }).then(function() {
+
+                    console.log("Query is successful");
+                    $('.red_window').remove();
+                    $('.pre_red_window').remove();
+                    
+                    location.reload();
+        
+                }).catch(function() {
+        
+                    console.log("Query is not successful");
+        
+                });
+
+            }
+
+            title = "";
+            value = "";
+            en = "";
+            stage_change = "";
+
+        })
+
+        
+
+    }
+
+    else if (event.target.classList == "udalen") {
+
+        // Удаление
+
+        let ev = event.target.value;
+
+        axios.delete(`/api/v1/tasks/${ev}`
+                        
+            ).then(function() {
+
+                console.log('Query is successful');
+                $(`#id${ev}`).remove();
+
+
+            }).catch(function() {
+
+                console.log('Query is not successful');
+
+            })
+
+    }
+
+} 
 
 });
