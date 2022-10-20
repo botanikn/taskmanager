@@ -2666,7 +2666,7 @@ $(document).ready(function() {
         console.log(title_s);
         // let title_id = [];
 
-        for (let b = extra + 1; b < number; b++) {
+        for (let b = extra; b < number; b++) {
 
             title_id.push(title_s[b][title_s[b].length - 1]);
 
@@ -3012,7 +3012,7 @@ $(document).ready(function() {
         console.log(`Сортированные даты = ${title_s}`);
         // let title_id = [];
 
-        for (let b = extra + 1; b < number; b++) {
+        for (let b = extra; b < number; b++) {
 
             title_id.push(title_s[b][title_s[b].length - 1]);
 
@@ -3362,7 +3362,7 @@ $(document).ready(function() {
         console.log(`Сортированные даты = ${title_s}`);
         // let title_id = [];
 
-        for (let b = extra + 1; b < number; b++) {
+        for (let b = extra; b < number; b++) {
 
             title_id.push(title_s[b][title_s[b].length - 1]);
 
@@ -3373,7 +3373,7 @@ $(document).ready(function() {
         console.log(`text_title = ${text_title}`);
         console.log(`title_s = ${title_s}`);
         console.log(`extra = ${extra}`);
-        extra = extra + 1;
+        //extra = extra + 1;
         let text_cr_dare_pars_mas_dop = [];
         let text_ex_date_pars_mas_dop = [];
 
@@ -3712,7 +3712,7 @@ $(document).ready(function() {
         console.log(title_s);
         // let title_id = [];
 
-        for (let b = extra; b < number; b++) {
+        for (let b = extra + 1; b < number; b++) {
 
             title_id.push(title_s[b][title_s[b].length - 1]);
 
@@ -4059,7 +4059,7 @@ $(document).ready(function() {
         console.log(`Сортированные даты = ${title_s}`);
         // let title_id = [];
 
-        for (let b = extra; b < number; b++) {
+        for (let b = extra + 1; b < number; b++) {
 
             title_id.push(title_s[b][title_s[b].length - 1]);
 
@@ -4409,7 +4409,7 @@ $(document).ready(function() {
         console.log(`Сортированные даты = ${title_s}`);
         // let title_id = [];
 
-        for (let b = extra; b < number; b++) {
+        for (let b = extra + 1; b < number; b++) {
 
             title_id.push(title_s[b][title_s[b].length - 1]);
 
