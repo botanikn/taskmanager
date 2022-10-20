@@ -528,7 +528,7 @@ $(document).ready(function() {
 
     // Кнопка сортировки по названию в стадии ready
 
-    $('#sort_ready').click(function() {
+    function sort(sort_stage, sort_class, sort_color, sorted_div) {
 
         let nas = []; // Массив, хранящий id только определённые task'и, например только стадию ready ( и нули, которые обозначают не подходящие)
         title_s = [];
@@ -536,11 +536,17 @@ $(document).ready(function() {
         extra = 0;
         needed = 0;
 
+        console.log(`sort_stage = ${sort_stage}`);
+        console.log(`sort_class = ${sort_class}`);
+        console.log(`sort_color = ${sort_color}`);
+        console.log(`sorted_div = ${sorted_div}`);
+
+
         console.log(`text_title в начале = ${text_title}`);
 
         for (let a = 0; a < number; a++) {
 
-            if (text_stage[a] == stages_collection_id[0]) {
+            if (text_stage[a] == `${sort_stage}`) {
 
                 nas[a] = text_title[a].toLowerCase() + a;
                 needed++;
@@ -583,7 +589,7 @@ $(document).ready(function() {
         let text_cr_dare_pars_mas_dop = [];
         let text_ex_date_pars_mas_dop = [];
 
-        $(".taskready").remove();
+        $(`.${sort_class}`).remove();
 
 
         for (let c = 0; c < needed; c++) {
@@ -608,10 +614,10 @@ $(document).ready(function() {
 
             let sort_div = $(`
             
-                    <div class="taskready" id="id${[title_id[c]]}">
+                    <div class=${sort_class} id="id${[title_id[c]]}">
                         <div class="header">
                             <div class="header_title">
-                                <center><p class="ready_color">${text_title[title_id[c]]}</p></center>
+                                <center><p class=${sort_color}>${text_title[title_id[c]]}</p></center>
                             </div>
                             <div class="menu">
                                 <input class="drop_button" value="..." type="button">
@@ -635,252 +641,13 @@ $(document).ready(function() {
                         </div>
                     </div>
                 
-                `).appendTo("div#ready");
-
-                console.log(`text_title = ${text_title}`);
-
-            // Кнопка редактирования у отсортировнных task'ов
-
-            $(`#sel_r${title_id[c]}`).click(function () {
-                        
-                let main = document.querySelector("body");
-                main.classList.add("readable");
-
-                console.log(`text_ex_date_pars_mas_dop[title_id[c]] = ${text_ex_date_pars_mas_dop[c]}`)
-
-                let pre_red_window = $(`
-                
-                    <div class="pre_red_window">
-                    </div>
-                
-                `).appendTo('html')
-
-                let red_window = $(`
-                
-                    <div class="red_window">
-                        <div class="window_name">
-                            <center><h2>Редактирование</h2></center>
-                        </div>
-                        <div class="window_title">
-                            <center><input type="text" class="title_input" placeholder="Введите название"></center>
-                        </div>
-                        <div class="window_value">
-                            <center><input type="text" class="value_input" placeholder="Введите содержание"></center>
-                        </div>
-                        <div class="window_en_date">
-                            <center><input type="date" class="en_date_input" placeholder="Введите дату завершения"></center>
-                        </div>
-                        <div class="window_progress">
-                            <center><input type="range" min="0" max="100" class="progressbar_input"></center>
-                        </div>
-                        <div class="window_stage">
-                            <div class="window_ready"><center><input type="button" class="ready_input" value="Ready"></div>
-                            <div class="window_progress"><center><input type="button" class="progress_input" value="Progress"></div>
-                            <div class="window_review"><center><input type="button" class="review_input" value="Review"></div>
-                            <div class="window_done"><center><input type="button" class="done_input" value="Done"></div>
-                        </div>
-                        <div class="choice">
-                            <div class="cancel">
-                                <center><input type="button" class="no_input" value="Отменить"></center>
-                            </div>
-                            <div class="approve">
-                                <center><input type="button" class="yes_input" value="Сохранить"></center>
-                            </div>
-                        </div>
-                    </div>
-                
-                `).appendTo("html");
-
-                $('.ready_input').click(function() {
-
-                    stage_change = stages_collection_id[0];
-                    cl_change = "taskready";
-                    div_stage_change = "div#ready";
-                    style_change = "ready_color";
-
-                })
-
-                $('.progress_input').click(function() {
-
-                    stage_change = stages_collection_id[1];
-                    cl_change = "taskprogress";
-                    div_stage_change = "div#progress";
-                    style_change = "progress_color";
-
-                })
-
-                $('.review_input').click(function() {
-
-                    stage_change = stages_collection_id[2];
-                    cl_change = "taskreview";
-                    div_stage_change = "div#review";
-                    style_change = "review_color";
-
-                })
-
-                $('.done_input').click(function() {
-
-                    stage_change = stages_collection_id[3];
-                    cl_change = "taskdone";
-                    div_stage_change = "div#done";
-                    style_change = "done_color";
-
-                })
-
-                $('.no_input').click(function() {
-
-                    $('.red_window').remove();
-                    $('.pre_red_window').remove();
-                    main.classList.remove("readable");
-
-                })
-
-                $('.yes_input').click(function() {
-
-                    main.classList.remove("readable");
-                    title = document.querySelector('.title_input').value;
-                    title_cl = document.querySelector('.title_input');
-                    value = document.querySelector('.value_input').value;
-                    value_cl = document.querySelector('.value_input');
-                    progress = document.querySelector('.progressbar_input').value;
-                    en = document.querySelector('.en_date_input').value;
-                    en_cl = document.querySelector('.en_date_input');
-                    en_cor = Date.parse(en);
-                    stage_change_cl = document.querySelector('.window_stage');
-
-                    /*Валидация*/
-
-                    if (title == "") {
-
-                        $('.title_input').css({
-
-                            'border-color': 'red',
-                            'border-width': '1px',
-                            'border-style': 'solid'
-                            
-                        });
-
-                    }
-
-                    if (title != "") {
-
-                        $('.title_input').css({
-
-                            'border-style': 'none'
-                            
-                        });
-
-                    }
-
-                    if (value == "") {
-
-                        $('.value_input').css({
-
-                            'border-color': 'red',
-                            'border-width': '1px',
-                            'border-style': 'solid'
-                            
-                        });
-
-                    }
-
-                    if (value != "") {
-
-                        $('.value_input').css({
-
-                            'border-style': 'none'
-                            
-                        });
-
-                    }
-
-                    if (en == "") {
-
-                        $('.en_date_input').css({
-
-                            'border-color': 'red',
-                            'border-width': '1px',
-                            'border-style': 'solid'
-                            
-                        });
-
-                    }
-
-                    if (en != "") {
-
-                        $('.en_date_input').css({
-
-                            'border-style': 'none'
-                            
-                        });
-
-                    }
-
-                    /*Валидация - конец*/
-
-                    if (title != "" && value != "" && en != "" && stage_change != "") {
-
-                        console.log(text_id[title_id[c]]);
-                        $(`#id${[title_id[c]]}`).remove();
-                        
-                        axios.patch(`/api/v1/tasks/${text_id[title_id[c]]}`, {
-
-                            completeProgress: progress,
-                            title: title,
-                            value: value,
-                            expiredDate: en_cor,
-                            stage: stage_change
-
-                        }).then(function() {
-
-                            console.log("Query is successful");
-                            $('.red_window').remove();
-                            $('.pre_red_window').remove();
-                            location.reload();
-                
-                        }).catch(function() {
-                
-                            console.log("Query is not successful");
-                
-                        });
-
-                    }
-
-                    title = "";
-                    value = "";
-                    en = "";
-                    stage_change = "";
-
-                })
-
-            })
-
-            $(`#sel_u${title_id[c]}`).click(function() {
-
-                axios.delete(`/api/v1/tasks/${text_id[title_id[c]]}`
-                    
-                    ).then(function() {
-
-                        console.log('Query is successful');
-                        $(`#id${[title_id[c]]}`).remove();
-
-                    }).catch(function() {
-
-                        console.log('Query is not successful');
-
-                    })
-
-            })
-
-            text_cr_dare_pars = "";
-            text_ex_date_pars = "";
+                `).appendTo(sorted_div);
 
         }
+    }
 
-        
-
-        
-    });
+    //$('#sort_ready').click(sort("6348fc2970e3820130ab4bb3", "taskready", "ready_color", "div#ready"));
+    
 
     $('#sort_cr_date_ready').click(function() {
 
