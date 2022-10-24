@@ -32,6 +32,12 @@ let style_change; // Переменная, хранящая цвет отобр�
 let text_cr_dare_pars_mas = []; // Массив, хранящий все даты создания task'ов в удобном виде
 let text_ex_date_pars_mas = []; // Массив, хранящий все даты предполагаемого окончания task'ов в удобном виде
 let stages_collection_id = []; // Массив, хранящий id всех стадий
+let presort_title = [];
+let sort_title = [];
+let id_sort = [];
+let bd_sort = [];
+let number_sort = [];
+let id_sorted = [];
 
 $(document).ready(function() {
 
@@ -82,6 +88,7 @@ $(document).ready(function() {
 
             number = response.data.tasks.length;
             bd = response.data.tasks;
+            console.log(stages_collection_id[0]);
 
             for (let i = 0; i < number; i++) {
 
@@ -171,8 +178,6 @@ $(document).ready(function() {
                     </div>
                 
                 `).appendTo(div_stage);
-
-                // Кнопка удаления
 
                 text_cr_dare_pars = "";
                 text_ex_date_pars = "";
@@ -292,120 +297,103 @@ $(document).ready(function() {
 
     });
 
-    // Кнопка сортировки по названию в стадии ready
-
     function sort(parametr, sort_stage, sort_class, sort_color, sorted_div) {
 
-        let nas = []; // Массив, хранящий id только определённые task'и, например только стадию ready ( и нули, которые обозначают не подходящие)
-        title_s = [];
-        title_id = [];
-        extra = 0;
+        let new_mas = [];
         needed = 0;
-
-        console.log(`sort_stage = ${sort_stage}`);
-        console.log(`sort_class = ${sort_class}`);
-        console.log(`sort_color = ${sort_color}`);
-        console.log(`sorted_div = ${sorted_div}`);
-        console.log(`parametr = ${parametr}`);
-
-
-        console.log(`text_title в начале = ${text_title}`);
 
         for (let a = 0; a < number; a++) {
 
             if (text_stage[a] == `${sort_stage}`) {
 
-                nas[a] = parametr[a].toLowerCase() + a;
+                new_mas.push(text_id[a]);
                 needed++;
 
             }
 
-            else {
-
-                nas[a] = 0;
-
-            }
         }
 
-        console.log(`first mas = ${nas}`)
+        console.log(new_mas);
 
-        for (a = 1; a < number; a++) {
+        id_sort = [];
 
-            if (nas[a] == 0) {
+        for (let i = 0; i < needed; i++) {
 
-                extra++;
+            axios.get(`/api/v1/tasks/${new_mas[i]}`
+        
+            ).then((response) => {
 
-            }
+                bd = response.data.task;
+
+                if (parametr == "title") {
+
+                    id_sort.push(bd.title + " " + bd._id + " " + bd.title.length);
+
+                }
+                else if (parametr == "creationDate") {
+
+                    id_sort.push(bd.creationDate + " " + bd._id + " " + bd.title.length);
+
+                }
+                if (parametr == "expiredDate") {
+
+                    id_sort.push(bd.expiredDate + " " + bd._id + " " + bd.title.length);
+
+                }
+
+            })
 
         }
 
-        title_s = nas.sort();
-        console.log(title_s);
-
-        if (sort_stage == stages_collection_id[3]) {
-
-            extra = extra - 1;
-
-        }
-
-        for (let b = extra + 1; b < number; b++) {
-
-            title_id.push(title_s[b][title_s[b].length - 1]);
-
-        }
-
-        console.log(`title_id[0] = ${title_id[0]}`);
-        console.log(`title_id = ${title_id}`);
-        console.log(`text_title = ${text_title}`);
-        console.log(`title_s = ${title_s}`);
-        console.log(`extra = ${extra}`);
-        extra = extra + 1;
-        let text_cr_dare_pars_mas_dop = [];
-        let text_ex_date_pars_mas_dop = [];
-
+        setTimeout(function () {console.log(`id_sort = ${id_sort}`);
+        id_sorted = id_sort.sort();
         $(`.${sort_class}`).remove();
 
+        for (let i = 0; i < needed; i++) {
 
-        for (let c = 0; c < needed; c++) {
+            let r = id_sorted[i].split(" ")[1];
 
-            for (let f1 = 0; f1 < 10; f1++) {
-                        
-                text_cr_dare_pars = text_cr_dare_pars + text_cr_date[title_id[c]][f1];
+            axios.get(`/api/v1/tasks/${r}`
+        
+            ).then((response) => {
 
-            }
+                bd = response.data.task;
+                let sorted_title = bd.title;
+                let sorted_value = bd.value;
+                let sorted_progressbar = bd.completeProgress;
+                let sort_cr_date = bd.creationDate;
+                let sort_ex_date = bd.expiredDate;
 
-            text_cr_dare_pars_mas_dop.push(text_cr_dare_pars);
+                for (let f1 = 0; f1 < 10; f1++) {
 
-            for (let f2 = 0; f2 < 10; f2++) {
-                    
-                text_ex_date_pars = text_ex_date_pars + text_ex_date[title_id[c]][f2];
+                    text_cr_dare_pars = text_cr_dare_pars + sort_cr_date[f1];
 
-            }
+                }
+                for (let f1 = 0; f1 < 10; f1++) {
 
-            text_ex_date_pars_mas_dop.push(text_ex_date_pars);
+                    text_ex_date_pars = text_ex_date_pars + sort_ex_date[f1];
 
-            // Вывод отсортированных task'ов
-
-            let sort_div = $(`
+                }
+                let sort_div = $(`
             
-                    <div class=${sort_class} id="id${text_id[title_id[c]]}">
+                    <div class=${sort_class} id="id${r}">
                         <div class="header">
                             <div class="header_title">
-                                <center><p class=${sort_color}>${text_title[title_id[c]]}</p></center>
+                                <center><p class=${sort_color}>${sorted_title}</p></center>
                             </div>
                             <div class="menu">
                                 <input class="drop_button" value="..." type="button">
                                 <div class="drop_content">
-                                    <button value="${text_id[title_id[c]]}" id="sel_r${[title_id[c]]}" class="redak">Редактировать</button>
-                                    <button value="${text_id[title_id[c]]}" id="sel_u${[title_id[c]]}" class="udalen">Удалить</button>
+                                    <button value="${r}" id="sel_r${i}" class="redak">Редактировать</button>
+                                    <button value="${r}" id="sel_u${i}" class="udalen">Удалить</button>
                                 </div>
                             </div>
                         </div>
                         <div class="middle">
-                            <p>${text_value[title_id[c]]}</p>
+                            <p>${sorted_value}</p>
                         </div>
                         <div class="progressbar">
-                            <progress max="100" value="${text_progressbar[title_id[c]]}"></progress>
+                            <progress max="100" value="${sorted_progressbar}"></progress>
                         </div>
                         <div class="start_date">
                             <p>Дата начала - ${text_cr_dare_pars}</p>
@@ -417,84 +405,94 @@ $(document).ready(function() {
                 
                 `).appendTo(sorted_div);
 
-            text_cr_dare_pars = "";
-            text_ex_date_pars = "";
+                text_cr_dare_pars = "";
+                text_ex_date_pars = "";
 
-        }
+            })
 
+            
+
+        }}, 1000);
+
+       
+
+        
         
     }
 
+    
+
+
     $('#sort_ready').click(function() {
         
-        sort(text_title, stages_collection_id[0], "taskready", "ready_color", "div#ready")
+        sort("title", stages_collection_id[0], "taskready", "ready_color", "div#ready")
     
     });
     
 
     $('#sort_cr_date_ready').click(function() {
 
-        sort(text_cr_date, stages_collection_id[0], "taskready", "ready_color", "div#ready")
+        sort("creationDate", stages_collection_id[0], "taskready", "ready_color", "div#ready")
     
     });
 
     $('#sort_en_date_ready').click(function() {
 
-        sort(text_ex_date, stages_collection_id[0], "taskready", "ready_color", "div#ready")
+        sort("expiredDate", stages_collection_id[0], "taskready", "ready_color", "div#ready")
 
     });
 
     $('#sort_progress').click(function() {
 
-        sort(text_title, stages_collection_id[1], "taskprogress", "progress_color", "div#progress")
+        sort("title", stages_collection_id[1], "taskprogress", "progress_color", "div#progress")
 
     });
 
     $('#sort_cr_date_progress').click(function() {
 
-        sort(text_cr_date, stages_collection_id[1], "taskprogress", "progress_color", "div#progress")
+        sort("creationDate", stages_collection_id[1], "taskprogress", "progress_color", "div#progress")
  
     });
 
     $('#sort_en_date_progress').click(function() {
 
-        sort(text_ex_date, stages_collection_id[1], "taskprogress", "progress_color", "div#progress")
+        sort("expiredDate", stages_collection_id[1], "taskprogress", "progress_color", "div#progress")
         
     });
 
     $('#sort_review').click(function() {
 
-        sort(text_title, stages_collection_id[2], "taskreview", "review_color", "div#review")
+        sort("title", stages_collection_id[2], "taskreview", "review_color", "div#review")
         
     });
 
     $('#sort_cr_date_review').click(function() {
 
-        sort(text_cr_date, stages_collection_id[2], "taskreview", "review_color", "div#review")
+        sort("creationDate", stages_collection_id[2], "taskreview", "review_color", "div#review")
         
     });
 
     $('#sort_en_date_review').click(function() {
 
-        sort(text_ex_date, stages_collection_id[2], "taskreview", "review_color", "div#review")
+        sort("expiredDate", stages_collection_id[2], "taskreview", "review_color", "div#review")
         
     });
 
     $('#sort_done').click(function() {
 
-        sort(text_title, stages_collection_id[3], "taskdone", "done_color", "div#done")
+        sort("title", stages_collection_id[3], "taskdone", "done_color", "div#done")
 
     });
 
     $('#sort_cr_date_done').click(function() {
 
-        sort(text_cr_date, stages_collection_id[3], "taskdone", "done_color", "div#done")
+        sort("creationDate", stages_collection_id[3], "taskdone", "done_color", "div#done")
         
     });
 
     $('#sort_en_date_done').click(function() {
 
-        sort(text_ex_date, stages_collection_id[3], "taskdone", "done_color", "div#done")
+        sort("expiredDate", stages_collection_id[3], "taskdone", "done_color", "div#done")
 
     });
 
@@ -715,8 +713,6 @@ $(document).ready(function() {
             stage_change = "";
 
         })
-
-        
 
     }
 
