@@ -9,6 +9,58 @@
 
 }
 
+.error {
+
+    border-color: red;
+    border-width: 1px;
+    border-style: solid;
+    
+
+}
+
+.inp_error {
+
+    border-color: red;
+    border-width: 1px;
+    border-style: solid;
+    margin-bottom: 12%;
+    height: 30px;
+    width: 300px;
+    border-radius: 5px;
+    background-color: #f2f2f2;
+
+}
+
+.ready_pressed {
+
+    background-color: #77f36c;
+    color: #1a6d12;
+
+}
+
+.progress_pressed {
+
+    background-color: #fbff00;
+    color: #888a14;
+
+}
+
+.review_pressed {
+
+    background-color: #ff7353;
+    color: #6d1d0b;
+
+}
+
+.done_pressed {
+
+    background-color: #938aec;
+    color: #111b72;
+
+}
+
+
+
 #text_head {
     
     margin-bottom: 10%;
@@ -533,68 +585,64 @@
 
         }
 
-            .ready_input {
+            #ready_input {
 
-                background-color: black;
-                color: white;
+                
                 height: 30px;
                 width: 100px;
                 border-radius: 10px;
 
             }
 
-            .ready_input:hover {
+            #ready_input:hover {
 
                 background-color: #77f36c;
                 color: #1a6d12;
 
             }
 
-            .progress_input {
+            #progress_input {
 
-                background-color: black;
-                color: white;
+                
                 height: 30px;
                 width: 100px;
                 border-radius: 10px;
 
             }
 
-            .progress_input:hover {
+            #progress_input:hover {
 
                 background-color: #fbff00;
                 color: #888a14;
 
             }
 
-            .review_input {
+            #review_input {
 
-                background-color: black;
-                color: white;
+                
                 height: 30px;
                 width: 100px;
                 border-radius: 10px;
 
             }
 
-            .review_input:hover {
+            #review_input:hover {
 
                 background-color: #ff7353;
                 color: #6d1d0b;
 
             }
 
-            .done_input {
+            #done_input {
 
-                background-color: black;
-                color: white;
+                
                 height: 30px;
                 width: 100px;
                 border-radius: 10px;
 
             }
 
-            .done_input:hover {
+            #done_input:hover {
 
                 background-color: #938aec;
                 color: #111b72;

@@ -1,20 +1,4 @@
-let text_title = []; // Массив, хранящий названия всех task'ов
-let text_value = []; // Массив, хранящий содержание всех task'ов
-let text_progressbar = []; // Массив, хранящий прогресс всех task'ов
-let text_cr_date = []; // Массив, хранящий даты создания всех task'ов
-let text_cr_dare_pars = ""; // Переменная хранящая дату создания task'a в удобном виде
-let text_ex_date = []; // Массив, хранящий даты предполагаемого окончания всех task'ов
-let text_ex_date_pars = ""; // Переменная хранящая дату редполагаемого окончания task'a в удобном виде
-let text_stage = []; // Массив, хранящий стадии всех task'ов
-let title_s = []; // Массив, хранящий отсортированный массив nas
-let title_id = []; // Массив, хранящий только определённые и отсортированные task'и
-let text_id = []; // Массив, хранящий id всех task'ов
-let number = 0; // Переменная, хранящая количество task'ов в коллекции
-let bd = []; // Переменная, хранящая все task'и
 let stage_change = ""; // Переменная, хранящая стадию task'а после его редактирования
-let div_stage; // Переменная, хранящая информацию, в какой столбец будет отнесён task
-let style; // Переменная, хранящая информацию, каким цветом будет отображаться название task'а
-let done = 0; // Переменная, хранящая количество выполненных заданий
 let title = ""; // Переменная, хранящая будущее название task'а после редактирования
 let value = ""; // Переменная, хранящая будущее содержание task'а после редактирования
 let progress; // Переменная, хранящая будущую шкалу прогресса task'а после редактирования
@@ -23,21 +7,12 @@ let en_cor; // Переменная, хранящая обработанную �
 let t = ""; // Переменная, хранящая название task'а во время его создания
 let v = ""; // Переменная, хранящая содержание task'а во время его создания
 let d = ""; // Переменная, хранящая дату планируемого окончания task'а во время его создания
-let extra = 0; // Переменная, хранящая количество ненужных task'ов во время сортировки
-let needed = 0; // Переменная, хранящая количество нужных task'ов во время сортировки
 let cl; // Переменная, хранящая class task'а
-let cl_change; // Переменная, хранящая class task'a, который он получит после редактирования
-let div_stage_change; // Переменная, хранящая хранящая информацию, в какой столбец будет отнесён task после редактирования
-let style_change; // Переменная, хранящая цвет отображения названия task'а после редактирования
-let text_cr_dare_pars_mas = []; // Массив, хранящий все даты создания task'ов в удобном виде
-let text_ex_date_pars_mas = []; // Массив, хранящий все даты предполагаемого окончания task'ов в удобном виде
-let stages_collection_id = []; // Массив, хранящий id всех стадий
-let presort_title = [];
-let sort_title = [];
-let id_sort = [];
-let bd_sort = [];
-let number_sort = [];
-let id_sorted = [];
+let stages_collection = []; // Массив, хранящий id всех стадий
+let filterTask; // Массив, хранящий task'и определённых стадий, необходимо для первоначальной отрисовки страницы
+let fi_t_2; // Массив, хранящий task'и определённой стадии, необходимо для сортировки
+let stages_num_id = []; // Массив, хранящий id стадий
+let fil_sor; // Отсортированный массив fi_t_2
 
 $(document).ready(function() {
 
@@ -47,26 +22,28 @@ $(document).ready(function() {
     
         ).then((stages_response) => {
 
-            for (let t = 0; t < 4; t++) {
+            stages_collection = stages_response.data.stages;
 
-                if (stages_response.data.stages[t].name == "ready") {
+            for (let i = 0; i < 4; i++) {
 
-                    stages_collection_id[0] = stages_response.data.stages[t]._id;
+                if (stages_response.data.stages[i].name == "ready") {
 
-                }
-                else if (stages_response.data.stages[t].name == "progress") {
-
-                    stages_collection_id[1] = stages_response.data.stages[t]._id;
+                    stages_num_id[0] = stages_response.data.stages[i]._id;
 
                 }
-                else if (stages_response.data.stages[t].name == "review") {
+                else if (stages_response.data.stages[i].name == "progress") {
 
-                    stages_collection_id[2] = stages_response.data.stages[t]._id;
+                    stages_num_id[1] = stages_response.data.stages[i]._id;
 
                 }
-                if (stages_response.data.stages[t].name == "done") {
+                else if (stages_response.data.stages[i].name == "review") {
 
-                    stages_collection_id[3] = stages_response.data.stages[t]._id;
+                    stages_num_id[2] = stages_response.data.stages[i]._id;
+
+                }
+                else if (stages_response.data.stages[i].name == "done") {
+
+                    stages_num_id[3] = stages_response.data.stages[i]._id;
 
                 }
 
@@ -78,119 +55,252 @@ $(document).ready(function() {
 
         })
 
-    console.log(stages_collection_id);
-
     // Получение task'ов
 
     axios.get('/api/v1/tasks'
         
         ).then((response) => {
 
-            number = response.data.tasks.length;
-            bd = response.data.tasks;
-            console.log(stages_collection_id[0]);
+            let donetasks = response.data.tasks.filter((item) => {
 
-            for (let i = 0; i < number; i++) {
+                return item.stage == stages_num_id[3];
 
-                text_id.push(bd[i]._id);
-                text_title.push(bd[i].title);
-                text_value.push(bd[i].value);
-                text_progressbar.push(bd[i].completeProgress);
-                text_cr_date.push(bd[i].creationDate);
-                text_ex_date.push(bd[i].expiredDate);
-                text_stage.push(bd[i].stage);
+            })
 
-                for (let f1 = 0; f1 < 10; f1++) {
-                        
-                    text_cr_dare_pars = text_cr_dare_pars + text_cr_date[i][f1];
+            let coli = $(`<p>${donetasks.length} / ${response.data.tasks.length}</p>`).appendTo("#coli");
+            let find = $(`<center><progress max="${response.data.tasks.length}" value="${donetasks.length}"></progress>`).appendTo("#pr");
 
-                }
+            stages_collection.map((stage) => {
+                
+                filterTask = response.data.tasks.filter((item) => {
 
-                text_cr_dare_pars_mas.push(text_cr_dare_pars);
+                    return item.stage == stage._id;
 
-                for (let f2 = 0; f2 < 10; f2++) {
-                        
-                    text_ex_date_pars = text_ex_date_pars + text_ex_date[i][f2];
+                })
 
-                }
+                // Отрисовка task'ов
 
-                text_ex_date_pars_mas.push(text_ex_date_pars);
+                filterTask.map((tasks) => {
 
-                if (text_stage[i] == stages_collection_id[0]) {
-
-                    div_stage = "div#ready";
-                    style = "ready_color";
-                    cl = "taskready";
-
-                }
-                else if (text_stage[i] == stages_collection_id[1]) {
-
-                    div_stage = "div#progress";
-                    style = "progress_color";
-                    cl = "taskprogress";
-
-                }
-                else if (text_stage[i] == stages_collection_id[2]) {
-
-                    div_stage = "div#review";
-                    style = "review_color";
-                    cl = "taskreview";
-
-                }
-                else if (text_stage[i] == stages_collection_id[3]) {
-
-                    div_stage = "div#done";
-                    style = "done_color";
-                    cl = "taskdone";
-                    done++;
-
-                }
-
-                // Вывод task'ов
-
-                let main_div = $(`
+                    let div = $(`
             
-                    <div class="${cl}" id="${text_id[i]}">
+                    <div class="task${stage.name}">
                         <div class="header">
                             <div class="header_title">
-                                <center><p class="${style}">${text_title[i]}</p></center>
+                                <center><p class="${stage.name}_color">${tasks.title}</p></center>
                             </div>
                             <div class="menu">
                                 <input class="drop_button" value="..." type="button">
                                 <div class="drop_content">
-                                    <button value="${text_id[i]}" id="sel_r${i}" class="redak">Редактировать</button>
-                                    <button value="${text_id[i]}" id="sel_u${i}" class="udalen">Удалить</button>
+                                    <button value="Red" class="redak" id="${tasks.title + " " + tasks.value + " " + tasks.completeProgress + " " + tasks.expiredDate.substr(0, 10) + " " + stage._id + " " + tasks._id}">Редактировать</button>
+                                    <button value="${tasks._id}" class="udalen" id="${tasks._id}">Удалить</button>
                                 </div>
                             </div>
                         </div>
                         <div class="middle">
-                            <p>${text_value[i]}</p>
+                            <p>${tasks.value}</p>
                         </div>
                         <div class="progressbar">
-                            <progress max="100" value="${text_progressbar[i]}"></progress>
+                            <progress max="100" value="${tasks.completeProgress}"></progress>
                         </div>
                         <div class="start_date">
-                            <p>Дата начала - ${text_cr_dare_pars}</p>
+                            <p>Дата начала - ${tasks.creationDate.substr(0, 10)}</p>
                         </div>
                         <div class="final_date">
-                            <p>Дата завершения - ${text_ex_date_pars}</p>
+                            <p>Дата завершения - ${tasks.expiredDate.substr(0, 10)}</p>
                         </div>
                     </div>
                 
-                `).appendTo(div_stage);
+                `).appendTo(`div#${stage.name}`);
 
-                text_cr_dare_pars = "";
-                text_ex_date_pars = "";
+                })
+
+                // Сортировка task'ов
+
+                function sor(parametr, stage_id, stage_name) {
+
+                    fi_t_2 = response.data.tasks.filter((item) => {
+
+                        return item.stage == stage_id;
+    
+                    })
+
+                    if (parametr == "title") {
+
+                        fil_sor = fi_t_2.sort((a, b) => {
+
+                            if (a.title.toLowerCase() < b.title.toLowerCase()) {
+        
+                                return -1;
+        
+                            }
+                            else if (a.title.toLowerCase() > b.title.toLowerCase()) {
+        
+                                return 1
+        
+                            }
+                            else return 0
+        
+                        })
+
+                    }
+                    else if (parametr == "cr_date") {
+
+                        fil_sor = fi_t_2.sort((a, b) => {
+
+                            if (a.creationDate.toLowerCase() < b.creationDate.toLowerCase()) {
+        
+                                return -1;
+        
+                            }
+                            else if (a.creationDate.toLowerCase() > b.creationDate.toLowerCase()) {
+        
+                                return 1
+        
+                            }
+                            else return 0
+        
+                        })
+
+                    }
+                    else if (parametr == "en_date") {
+
+                        fil_sor = fi_t_2.sort((a, b) => {
+
+                            if (a.expiredDate.toLowerCase() < b.expiredDate.toLowerCase()) {
+        
+                                return -1;
+        
+                            }
+                            else if (a.expiredDate.toLowerCase() > b.expiredDate.toLowerCase()) {
+        
+                                return 1
+        
+                            }
+                            else return 0
+        
+                        })
+
+                    }
+
+                    $(`.task${stage_name}`).remove();
+
+                    fil_sor.map((tasks) => {
+
+                        let so = $(`
+                
+                        <div class="task${stage_name}">
+                            <div class="header">
+                                <div class="header_title">
+                                    <center><p class="${stage_name}_color">${tasks.title}</p></center>
+                                </div>
+                                <div class="menu">
+                                    <input class="drop_button" value="..." type="button">
+                                    <div class="drop_content">
+                                        <button value="Red" class="redak" id="${tasks.title + " " + tasks.value + " " + tasks.completeProgress + " " + tasks.expiredDate.substr(0, 10) + " " + stage_id + " " + tasks._id}">Редактировать</button>
+                                        <button value="${tasks._id}" class="udalen" id="${tasks._id}">Удалить</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="middle">
+                                <p>${tasks.value}</p>
+                            </div>
+                            <div class="progressbar">
+                                <progress max="100" value="${tasks.completeProgress}"></progress>
+                            </div>
+                            <div class="start_date">
+                                <p>Дата начала - ${tasks.creationDate.substr(0, 10)}</p>
+                            </div>
+                            <div class="final_date">
+                                <p>Дата завершения - ${tasks.expiredDate.substr(0, 10)}</p>
+                            </div>
+                        </div>
+                    
+                    `).appendTo(`div#${stage_name}`);
+    
+                    })
+
+                }
+
+                // Слушатели событий
+
+                $('#sort_ready').click(function() {
+        
+                    sor("title", stages_num_id[0], "ready")
+                
+                });
+
+                $('#sort_cr_date_ready').click(function() {
+
+                    sor("cr_date", stages_num_id[0], "ready")
+                
+                });
+            
+                $('#sort_en_date_ready').click(function() {
+            
+                    sor("en_date", stages_num_id[0], "ready")
+            
+                });
+            
+                $('#sort_progress').click(function() {
+            
+                    sor("title", stages_num_id[1], "progress")
+            
+                });
+            
+                $('#sort_cr_date_progress').click(function() {
+            
+                    sor("cr_date", stages_num_id[1], "progress")
+             
+                });
+            
+                $('#sort_en_date_progress').click(function() {
+            
+                    sor("en_date", stages_num_id[1], "progress")
+                    
+                });
+            
+                $('#sort_review').click(function() {
+            
+                    sor("title", stages_num_id[2], "review")
+                    
+                });
+            
+                $('#sort_cr_date_review').click(function() {
+            
+                    sor("cr_date", stages_num_id[2], "review")
+                    
+                });
+            
+                $('#sort_en_date_review').click(function() {
+            
+                    sor("en_date", stages_num_id[2], "review")
+                    
+                });
+            
+                $('#sort_done').click(function() {
+            
+                    sor("title", stages_num_id[3], "done")
+            
+                });
+            
+                $('#sort_cr_date_done').click(function() {
+            
+                    sor("cr_date", stages_num_id[3], "done")
+                    
+                });
+            
+                $('#sort_en_date_done').click(function() {
+            
+                    sor("en_date", stages_num_id[3], "done")
+            
+                });
 
             }
-
-            let coli = $(`<p>${done} / ${number}</p>`).appendTo("#coli");
-            let find = $(`<center><progress max="${number}" value="${done}"></progress>`).appendTo("#pr");
-            
+                
+            )
 
         });
-
-        
 
     // Создание task'а
 
@@ -208,67 +318,37 @@ $(document).ready(function() {
 
         if (t == "") {
 
-            $('#title').css({
-
-                'border-color': 'red',
-                'border-width': '1px',
-                'border-style': 'solid'
-                
-            });
+            $('#title').addClass('inp_error').removeClass('inp');
 
         }
 
         if (t != "") {
 
-            $('#title').css({
-
-                'border-style': 'none'
-                
-            });
+            $('#title').addClass('inp').removeClass('inp_error');
 
         }
 
         if (v == "") {
 
-            $('#value').css({
-
-                'border-color': 'red',
-                'border-width': '1px',
-                'border-style': 'solid'
-                
-            });
+            $('#value').addClass('inp_error').removeClass('inp');
 
         }
 
         if (v != "") {
 
-            $('#value').css({
-
-                'border-style': 'none'
-                
-            });
+            $('#value').addClass('inp').removeClass('inp_error');
 
         }
 
         if (d == "") {
 
-            $('#date').css({
-
-                'border-color': 'red',
-                'border-width': '1px',
-                'border-style': 'solid'
-                
-            });
+            $('#date').addClass('inp_error').removeClass('inp');
 
         }
 
         if (d != "") {
 
-            $('#date').css({
-
-                'border-style': 'none'
-                
-            });
+            $('#date').addClass('inp').removeClass('inp_error');
 
         }
 
@@ -279,7 +359,7 @@ $(document).ready(function() {
                 title: t,
                 value: v,
                 expiredDate: d_cor,
-                stage: stages_collection_id
+                stage: stages_num_id[0]
                 
 
             }).then(function() {
@@ -297,207 +377,6 @@ $(document).ready(function() {
 
     });
 
-    function sort(parametr, sort_stage, sort_class, sort_color, sorted_div) {
-
-        let new_mas = [];
-        needed = 0;
-
-        for (let a = 0; a < number; a++) {
-
-            if (text_stage[a] == `${sort_stage}`) {
-
-                new_mas.push(text_id[a]);
-                needed++;
-
-            }
-
-        }
-
-        console.log(new_mas);
-
-        id_sort = [];
-
-        for (let i = 0; i < needed; i++) {
-
-            axios.get(`/api/v1/tasks/${new_mas[i]}`
-        
-            ).then((response) => {
-
-                bd = response.data.task;
-
-                if (parametr == "title") {
-
-                    id_sort.push(bd.title + " " + bd._id + " " + bd.title.length);
-
-                }
-                else if (parametr == "creationDate") {
-
-                    id_sort.push(bd.creationDate + " " + bd._id + " " + bd.title.length);
-
-                }
-                if (parametr == "expiredDate") {
-
-                    id_sort.push(bd.expiredDate + " " + bd._id + " " + bd.title.length);
-
-                }
-
-            })
-
-        }
-
-        setTimeout(function () {console.log(`id_sort = ${id_sort}`);
-        id_sorted = id_sort.sort();
-        $(`.${sort_class}`).remove();
-
-        for (let i = 0; i < needed; i++) {
-
-            let r = id_sorted[i].split(" ")[1];
-
-            axios.get(`/api/v1/tasks/${r}`
-        
-            ).then((response) => {
-
-                bd = response.data.task;
-                let sorted_title = bd.title;
-                let sorted_value = bd.value;
-                let sorted_progressbar = bd.completeProgress;
-                let sort_cr_date = bd.creationDate;
-                let sort_ex_date = bd.expiredDate;
-
-                for (let f1 = 0; f1 < 10; f1++) {
-
-                    text_cr_dare_pars = text_cr_dare_pars + sort_cr_date[f1];
-
-                }
-                for (let f1 = 0; f1 < 10; f1++) {
-
-                    text_ex_date_pars = text_ex_date_pars + sort_ex_date[f1];
-
-                }
-                let sort_div = $(`
-            
-                    <div class=${sort_class} id="id${r}">
-                        <div class="header">
-                            <div class="header_title">
-                                <center><p class=${sort_color}>${sorted_title}</p></center>
-                            </div>
-                            <div class="menu">
-                                <input class="drop_button" value="..." type="button">
-                                <div class="drop_content">
-                                    <button value="${r}" id="sel_r${i}" class="redak">Редактировать</button>
-                                    <button value="${r}" id="sel_u${i}" class="udalen">Удалить</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="middle">
-                            <p>${sorted_value}</p>
-                        </div>
-                        <div class="progressbar">
-                            <progress max="100" value="${sorted_progressbar}"></progress>
-                        </div>
-                        <div class="start_date">
-                            <p>Дата начала - ${text_cr_dare_pars}</p>
-                        </div>
-                        <div class="final_date">
-                            <p>Дата завершения - ${text_ex_date_pars}</p>
-                        </div>
-                    </div>
-                
-                `).appendTo(sorted_div);
-
-                text_cr_dare_pars = "";
-                text_ex_date_pars = "";
-
-            })
-
-            
-
-        }}, 1000);
-
-       
-
-        
-        
-    }
-
-    
-
-
-    $('#sort_ready').click(function() {
-        
-        sort("title", stages_collection_id[0], "taskready", "ready_color", "div#ready")
-    
-    });
-    
-
-    $('#sort_cr_date_ready').click(function() {
-
-        sort("creationDate", stages_collection_id[0], "taskready", "ready_color", "div#ready")
-    
-    });
-
-    $('#sort_en_date_ready').click(function() {
-
-        sort("expiredDate", stages_collection_id[0], "taskready", "ready_color", "div#ready")
-
-    });
-
-    $('#sort_progress').click(function() {
-
-        sort("title", stages_collection_id[1], "taskprogress", "progress_color", "div#progress")
-
-    });
-
-    $('#sort_cr_date_progress').click(function() {
-
-        sort("creationDate", stages_collection_id[1], "taskprogress", "progress_color", "div#progress")
- 
-    });
-
-    $('#sort_en_date_progress').click(function() {
-
-        sort("expiredDate", stages_collection_id[1], "taskprogress", "progress_color", "div#progress")
-        
-    });
-
-    $('#sort_review').click(function() {
-
-        sort("title", stages_collection_id[2], "taskreview", "review_color", "div#review")
-        
-    });
-
-    $('#sort_cr_date_review').click(function() {
-
-        sort("creationDate", stages_collection_id[2], "taskreview", "review_color", "div#review")
-        
-    });
-
-    $('#sort_en_date_review').click(function() {
-
-        sort("expiredDate", stages_collection_id[2], "taskreview", "review_color", "div#review")
-        
-    });
-
-    $('#sort_done').click(function() {
-
-        sort("title", stages_collection_id[3], "taskdone", "done_color", "div#done")
-
-    });
-
-    $('#sort_cr_date_done').click(function() {
-
-        sort("creationDate", stages_collection_id[3], "taskdone", "done_color", "div#done")
-        
-    });
-
-    $('#sort_en_date_done').click(function() {
-
-        sort("expiredDate", stages_collection_id[3], "taskdone", "done_color", "div#done")
-
-    });
-
-
-
     let proba = document.querySelector("#main_part");
     proba.onclick = function(event) {
 
@@ -505,7 +384,14 @@ $(document).ready(function() {
 
         if (event.target.className == 'redak') {
 
-        let ev = event.target.value;
+        let ev2 = event.target.id;
+
+        let s_title = ev2.split(" ")[0];
+        let s_value = ev2.split(" ")[1];
+        let s_prog = ev2.split(" ")[2];
+        let s_ex_date = ev2.split(" ")[3];
+        let s_stage_id = ev2.split(" ")[4];
+        let s_task_id = ev2.split(" ")[5];
         
         let main = document.querySelector("body");
         main.classList.add("readable");
@@ -526,22 +412,22 @@ $(document).ready(function() {
                     <center><h2>Редактирование</h2></center>
                 </div>
                 <div class="window_title">
-                    <center><input type="text" class="title_input" placeholder="Введите название"></center>
+                    <center><input type="text" class="title_input" placeholder="Введите название" value="${s_title}"></center>
                 </div>
                 <div class="window_value">
-                    <center><input type="text" class="value_input" placeholder="Введите содержание"></center>
+                    <center><input type="text" class="value_input" placeholder="Введите содержание" value="${s_value}"></center>
                 </div>
                 <div class="window_en_date">
-                    <center><input type="date" class="en_date_input" placeholder="Введите дату завершения"></center>
+                    <center><input type="date" class="en_date_input" placeholder="Введите дату завершения" value="${s_ex_date}"></center>
                 </div>
                 <div class="window_progress">
-                    <center><input type="range" min="0" max="100" class="progressbar_input"></center>
+                    <center><input type="range" min="0" max="100" class="progressbar_input" value="${s_prog}"></center>
                 </div>
                 <div class="window_stage">
-                    <div class="window_ready"><center><input type="button" class="ready_input" value="Ready"></div>
-                    <div class="window_progress"><center><input type="button" class="progress_input" value="Progress"></div>
-                    <div class="window_review"><center><input type="button" class="review_input" value="Review"></div>
-                    <div class="window_done"><center><input type="button" class="done_input" value="Done"></div>
+                    <div class="window_ready"><center><input type="button" id="ready_input" value="Ready"></div>
+                    <div class="window_progress"><center><input type="button" id="progress_input" value="Progress"></div>
+                    <div class="window_review"><center><input type="button" id="review_input" value="Review"></div>
+                    <div class="window_done"><center><input type="button" id="done_input" value="Done"></div>
                 </div>
                 <div class="choice">
                     <div class="cancel">
@@ -555,39 +441,45 @@ $(document).ready(function() {
         
         `).appendTo("html");
 
-        $('.ready_input').click(function() {
+        stage_change = s_stage_id;
 
-            stage_change = stages_collection_id[0];
-            cl_change = "taskready";
-            div_stage_change = "div#ready";
-            style_change = "ready_color";
+        $('#ready_input').click(function() {
 
-        })
-
-        $('.progress_input').click(function() {
-
-            stage_change = stages_collection_id[1];
-            cl_change = "taskprogress";
-            div_stage_change = "div#progress";
-            style_change = "progress_color";
+            stage_change = stages_num_id[0];
+            $('#ready_input').addClass("ready_pressed");
+            $('#progress_input').removeClass("progress_pressed");
+            $('#review_input').removeClass("review_pressed");
+            $('#done_input').removeClass("done_pressed");
 
         })
 
-        $('.review_input').click(function() {
+        $('#progress_input').click(function() {
 
-            stage_change = stages_collection_id[2];
-            cl_change = "taskreview";
-            div_stage_change = "div#review";
-            style_change = "review_color";
+            stage_change = stages_num_id[1];
+            $('#ready_input').removeClass("ready_pressed");
+            $('#progress_input').addClass("progress_pressed");
+            $('#review_input').removeClass("review_pressed");
+            $('#done_input').removeClass("done_pressed");
 
         })
 
-        $('.done_input').click(function() {
+        $('#review_input').click(function() {
 
-            stage_change = stages_collection_id[3];
-            cl_change = "taskdone";
-            div_stage_change = "div#done";
-            style_change = "done_color";
+            stage_change = stages_num_id[2];
+            $('#ready_input').removeClass("ready_pressed");
+            $('#progress_input').removeClass("progress_pressed");
+            $('#review_input').addClass("review_pressed");
+            $('#done_input').removeClass("done_pressed");
+
+        })
+
+        $('#done_input').click(function() {
+
+            stage_change = stages_num_id[3];
+            $('#ready_input').removeClass("ready_pressed");
+            $('#progress_input').removeClass("progress_pressed");
+            $('#review_input').removeClass("review_pressed");
+            $('#done_input').addClass("done_pressed");
 
         })
 
@@ -612,67 +504,37 @@ $(document).ready(function() {
 
             if (title == "") {
 
-                $('.title_input').css({
-
-                    'border-color': 'red',
-                    'border-width': '1px',
-                    'border-style': 'solid'
-                    
-                });
+                $('.title_input').addClass("error").removeClass("not_error");
 
             }
 
             if (title != "") {
 
-                $('.title_input').css({
-
-                    'border-style': 'none'
-                    
-                });
+                $('.title_input').addClass("not_error").removeClass("error");
 
             }
 
             if (value == "") {
 
-                $('.value_input').css({
-
-                    'border-color': 'red',
-                    'border-width': '1px',
-                    'border-style': 'solid'
-                    
-                });
+                $('.value_input').addClass("error").removeClass("not_error");
 
             }
 
             if (value != "") {
 
-                $('.value_input').css({
-
-                    'border-style': 'none'
-                    
-                });
+                $('.value_input').addClass("not_error").removeClass("error");
 
             }
 
             if (en == "") {
 
-                $('.en_date_input').css({
-
-                    'border-color': 'red',
-                    'border-width': '1px',
-                    'border-style': 'solid'
-                    
-                });
+                $('.en_date_input').addClass("error").removeClass("not_error");
 
             }
 
             if (en != "") {
 
-                $('.en_date_input').css({
-
-                    'border-style': 'none'
-                    
-                });
+                $('.en_date_input').addClass("not_error").removeClass("error");
 
             }
 
@@ -680,10 +542,10 @@ $(document).ready(function() {
 
             if (title != "" && value != "" && en != "" && stage_change != "") {
 
-                console.log(ev);
-                $(`#${ev}`).remove();
+                console.log(s_task_id);
+                $(`#${s_task_id}`).remove();
 
-                axios.patch(`/api/v1/tasks/${ev}`, {
+                axios.patch(`/api/v1/tasks/${s_task_id}`, {
 
                     completeProgress: progress,
                     title: title,
@@ -696,7 +558,6 @@ $(document).ready(function() {
                     console.log("Query is successful");
                     $('.red_window').remove();
                     $('.pre_red_window').remove();
-                    
                     location.reload();
         
                 }).catch(function() {
@@ -727,7 +588,8 @@ $(document).ready(function() {
             ).then(function() {
 
                 console.log('Query is successful');
-                $(`#id${ev}`).remove();
+                $(`#${ev}`).remove();
+                location.reload();
 
 
             }).catch(function() {
