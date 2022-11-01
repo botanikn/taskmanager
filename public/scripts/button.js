@@ -359,7 +359,7 @@ $(document).ready(function() {
                 title: t,
                 value: v,
                 expiredDate: d_cor,
-                stage: stages_num_id[0]
+                stage: "1"
                 
 
             }).then(function() {
