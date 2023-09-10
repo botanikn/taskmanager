@@ -74,13 +74,13 @@ $(document).ready(function() {
             }).then(function() {
 
                 console.log("Query is successful");
-                location.reload();
 
             }).catch(function() {
 
                 console.log("Query is not successful");
 
             });
+            location.reload();
 
         }
 
